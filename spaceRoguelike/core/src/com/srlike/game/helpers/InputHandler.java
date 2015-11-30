@@ -7,12 +7,12 @@ package com.srlike.game.helpers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.srlike.game.display.Renderer;
-import com.srlike.game.display.ScrollHandler;
 import com.srlike.game.display.Updater;
 import com.srlike.game.gameobjects.Ship;
 
@@ -26,7 +26,6 @@ public class InputHandler implements InputProcessor {
     private Renderer renderer;
     private OrthographicCamera camera;
     
-    private ScrollHandler scroller; //will probably need to call methods from this later
     
     private Ship ship;
     private Vector3 mousePos;   //helps in steering ship
@@ -64,7 +63,12 @@ public class InputHandler implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
+        if(button==Buttons.LEFT){
+            updater.shipFire();
+        }
+        
+        
+        return true;
     }
 
     @Override

@@ -6,16 +6,13 @@
 package com.srlike.game.display;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.srlike.game.gameobjects.Asteroid;
+import com.srlike.game.gameobjects.ScreenObject;
+import com.srlike.game.gameobjects.ScreenObject.Type;
 import com.srlike.game.gameobjects.Ship;
 import com.srlike.game.helpers.AssetLoader;
 import java.util.ArrayList;
@@ -30,15 +27,14 @@ public class Renderer {
     private Updater updater;
     
     private OrthographicCamera camera;
+    private OrthographicCamera hudCam;
     
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
     
     private Ship ship;
-    private ArrayList<Asteroid> testAsteroids;
+    private ArrayList<ScreenObject> screenObjects;
     
-    private TextureRegion shipSprite;
-    private TextureRegion asteroidSprite;
     
     
     public Renderer(Updater updater, float screenW, float screenH){
@@ -52,26 +48,21 @@ public class Renderer {
         camera.position.set(camera.viewportWidth/2f, camera.viewportHeight/2f, 0);
         camera.update();
         
+        hudCam=new OrthographicCamera(screenW, screenH);
+        hudCam.setToOrtho(false, screenW, screenH);
+        hudCam.position.set(hudCam.viewportWidth/2f, hudCam.viewportHeight/2f, 0);
+        hudCam.update();
+        
         batch=new SpriteBatch();
-        
-        
         shapeRenderer=new ShapeRenderer();
         
-        
-        loadSprites();
         loadObjects();
     }
     
-    private void loadSprites(){
-        shipSprite=new TextureRegion(AssetLoader.shipTexture);
-        asteroidSprite=new TextureRegion(AssetLoader.asteroidTexture);
-        //bigShipS=new Sprite(AssetLoader.bigShipTexture);
-        //bigShipS.setPosition(0, 0);
-    }
     
     private void loadObjects(){
         ship=updater.getShip();
-        testAsteroids=updater.getAsteroids();
+        screenObjects=updater.getObjects();
     }
     
     public void render(){
@@ -85,23 +76,17 @@ public class Renderer {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         
-        //draw asteroids
-        for (Asteroid a:testAsteroids){
-            batch.draw(asteroidSprite, 
-                    a.getPosition().x-(asteroidSprite.getRegionWidth()/2), 
-                    a.getPosition().y-(asteroidSprite.getRegionHeight()/2));
+        //drawing game screen
+        for(ScreenObject s:screenObjects){
+            s.draw(batch);
         }
-        
-        //draw ship
-        batch.draw(shipSprite, ship.getPosition().x-(shipSprite.getRegionWidth()/2), 
-                ship.getPosition().y-(shipSprite.getRegionHeight()/2), 
-                shipSprite.getRegionWidth()/2, shipSprite.getRegionHeight()/2, 
-                shipSprite.getRegionWidth(), shipSprite.getRegionHeight(), 
-                1, 1, ship.getRotation());
         
         
         //hud
-        AssetLoader.arialFont.draw(batch, "testing text", screenW/2, screenH/2);
+        batch.setProjectionMatrix(hudCam.combined);
+        AssetLoader.arialFont.draw(batch, "Shields: "+ship.getHp(), 30,50);
+        AssetLoader.arialFont.draw(batch, "FPS: "+updater.getFPS(), 230,50);
+        
         batch.end();
         
         drawCollisionBoxes();
@@ -113,23 +98,30 @@ public class Renderer {
         
         //asteroids
         shapeRenderer.setColor(1,1,0,1);
-        for (Asteroid a:testAsteroids){
-            shapeRenderer.circle(a.getPosition().x, a.getPosition().y, a.getBoundingCircle().radius);
+        for (ScreenObject s:screenObjects){
+            if(s.getType()==Type.ASTEROID){
+                shapeRenderer.circle(s.getBoundingCircle().x, 
+                    s.getBoundingCircle().y, s.getBoundingCircle().radius);
+            }
+        }
+        
+        //enemies
+        shapeRenderer.setColor(1,0,1,1);
+        for (ScreenObject s:screenObjects){
+            if(s.getType()==Type.ENEMY){
+                shapeRenderer.circle(s.getBoundingCircle().x, 
+                    s.getBoundingCircle().y, s.getBoundingCircle().radius);
+            }
         }
         
         //ship
-        shapeRenderer.setColor(1,0,1,1);
-        shapeRenderer.circle(ship.getPosition().x, ship.getPosition().y, 
-                ship.getBoundingCircle().radius);
+        shapeRenderer.setColor(0,1,1,1);
+        shapeRenderer.circle(ship.getBoundingCircle().x, 
+                ship.getBoundingCircle().y, ship.getBoundingCircle().radius);
         
         
         shapeRenderer.end();
     }
     
     public OrthographicCamera getCam(){return camera;}
-    
-    
-    
-    
-    
 }

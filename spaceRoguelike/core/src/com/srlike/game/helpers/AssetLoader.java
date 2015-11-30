@@ -6,30 +6,27 @@
 package com.srlike.game.helpers;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
 /**
  * this class will load game assets and make them available for the other classes
  * @author Alex
  */
 public class AssetLoader {
-    public static Texture shipTexture;
-    public static Texture asteroidTexture;
-    public static Texture bigShipTexture;
+    public static TextureAtlas atlas;
+    
     public static BitmapFont arialFont;
     
     public static void load(){
-        shipTexture=new Texture(Gdx.files.internal("ship_scout_pirate.png"));
-        asteroidTexture=new Texture(Gdx.files.internal("test_asteroid.png"));
-        bigShipTexture=new Texture(Gdx.files.internal("ship_big.png"));
+        atlas=new TextureAtlas(Gdx.files.internal("spriteMap.txt"));
+        
         arialFont=new BitmapFont(Gdx.files.internal("arialblack.fnt"));
     }
     
     public static void dispose(){
-        shipTexture.dispose();
-        asteroidTexture.dispose();
-        bigShipTexture.dispose();
+        atlas.dispose();
+        
         arialFont.dispose();
     }
 }
