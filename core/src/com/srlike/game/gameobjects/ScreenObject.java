@@ -51,7 +51,9 @@ public abstract class ScreenObject {
     
     //getters and setters
     public Vector2 getPosition(){return position;}
+    public void setPosition(float x, float y){position.set(x, y);}
     public Vector2 getVelocity(){return velocity;}
+    public void setVelocity(float x, float y){velocity.set(x, y);}
     public int getWidth(){return width;}
     public int getHeight(){return height;}
     public float getRotation(){return rotation;}
