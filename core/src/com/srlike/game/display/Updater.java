@@ -154,6 +154,7 @@ public class Updater {
     public float getFPS(){return fps;}
     public Ship getShip(){return level.getShip();}
     public ArrayList getObjects(){return level.getObjects();}
+    public ToroidLevel getLevel(){return level;}
     
     /*
     private void generateLevel(){
