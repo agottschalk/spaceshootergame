@@ -29,19 +29,20 @@ public class Updater {
     //debug
     private float fps;
     
-    private Random random;
+    //private Random random;
     
     //stuff in level
-    private Ship ship;
-    private ArrayList<ScreenObject> gameObjects;        //holds everything
-    private ArrayList<Enemy> enemies;
+    //private Ship ship;
+    //private ArrayList<ScreenObject> gameObjects;        //holds everything
+    //private ArrayList<Enemy> enemies;
     private ToroidLevel level;
     
     
     public Updater(){
-        random=new Random();    //for testing right now, may move this object later
+        //random=new Random();    //for testing right now, may move this object later
         
         level=new ToroidLevel(10000, 6500); //approx 9 screens by 9 screens
+        level.generate();
         
         //ship=new Ship(0,0,112,118);
         
@@ -80,6 +81,7 @@ public class Updater {
         */
     }
     
+    /*
     private void checkCollisions(){
         for(ScreenObject s: gameObjects){
             Iterator itr=gameObjects.listIterator(gameObjects.indexOf(s));
@@ -99,10 +101,14 @@ public class Updater {
         return ((g.getPosition().dst(h.getPosition())) < 
                 (g.getBoundingCircle().radius+h.getBoundingCircle().radius));
     }
+    */
     
+    
+    /*
     private void cleanUp(boolean spawnDrops){
         //later this will also trigger explosions and powerup drops
-        for(int i=0; i<gameObjects.size(); /*blank*/){
+        for(int i=0; i<gameObjects.size(); //*blank
+                ){
             if(!gameObjects.get(i).getAlive()){
                 if(spawnDrops){
                     switch (gameObjects.get(i).getType()){
@@ -139,16 +145,17 @@ public class Updater {
             }
         }
     }
-    
+    */
     public void shipFire(){
         level.shipFire();
     }
+    
     
     public float getFPS(){return fps;}
     public Ship getShip(){return level.getShip();}
     public ArrayList getObjects(){return level.getObjects();}
     
-    
+    /*
     private void generateLevel(){
         gameObjects.add(ship);
         generateAsteroids();
@@ -202,4 +209,5 @@ public class Updater {
         }
         
     }
+    */
 }
