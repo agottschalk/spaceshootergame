@@ -161,25 +161,123 @@ public class ToroidLevel {
     //***************************************************
     
     public void update(float delta){
-        //update game objects
-        for(ScreenObject s:gameObjects){
-            if(ship.getPosition().dst(s.getPosition())<700){    //avoid updating offscreen objects
-                s.update(delta);
-            }
-        }
-        
+        //see if any enemies have spawned bullets
         for(Enemy e: enemies){
-            if(e.getFiring()){
+            if(ship.getPosition().dst(e.getPosition())<700 && e.getFiring()){
                 EnemyBullet b=e.fireBullet();
                 if(b != null){      //quick error check since all enemies have this method but not all shoot
                     gameObjects.add(b);
                 }
             }
-        } 
-            
+        }
+        
+        //update game objects
+        for(ScreenObject s:gameObjects){
+            if(ship.getPosition().dst(s.getPosition())<700){    //avoid updating offscreen objects
+                s.update(delta);
+                edgeCheck(s);
+            }
+        }
+        
+        
+        scrollLevel();
         checkCollisions();
         cleanUp(true);
     }
+    
+    private void edgeCheck(ScreenObject s){
+        if(s.getPosition().x>rightLvBound){
+            s.setPosition(s.getPosition().x-levelWidth, s.getPosition().y);
+        }else if(s.getPosition().y<leftLvBound){
+            s.setPosition(s.getPosition().x+levelWidth, s.getPosition().y);
+        }
+        
+        if(s.getPosition().y>topLvBound){
+            s.setPosition(s.getPosition().x, s.getPosition().y-levelHeight);
+        }else if(s.getPosition().y<bottomLvBound){
+            s.setPosition(s.getPosition().x, s.getPosition().y+levelHeight);
+        }
+    }
+    
+    
+    
+    //level scrolling ************************************
+    private void scrollLevel(){
+        if(ship.getPosition().x>rightCtrBound){
+            scrollRight();
+        }else if(ship.getPosition().x<leftCtrBound){
+            scrollLeft();
+        }
+        
+        if(ship.getPosition().y>topCtrBound){
+            scrollUp();
+        }else if(ship.getPosition().y<bottomCtrBound){
+            scrollDown();
+        }
+    }
+    
+    private void scrollRight(){
+        //teleport objects ahead of ship
+        for(ScreenObject s:gameObjects){
+            if(s.getPosition().x<leftCtrBound){
+                s.setPosition(s.getPosition().x+(levelWidth), 
+                        s.getPosition().y);
+            }
+        }
+        
+        //readjust sector and level boundries
+        rightLvBound+=sectorWidth;
+        leftLvBound+=sectorWidth;
+        rightCtrBound+=sectorWidth;
+        leftCtrBound+=sectorWidth;
+    }
+    
+    private void scrollLeft(){
+        for(ScreenObject s:gameObjects){
+            if(s.getPosition().x>rightCtrBound){
+                s.setPosition(s.getPosition().x-(levelWidth), 
+                        s.getPosition().y);
+            }
+        }
+        
+        rightLvBound-=sectorWidth;
+        leftLvBound-=sectorWidth;
+        rightCtrBound-=sectorWidth;
+        leftCtrBound-=sectorWidth;
+    }
+    
+    private void scrollUp(){
+        for(ScreenObject s:gameObjects){
+            if(s.getPosition().y<bottomCtrBound){
+                s.setPosition(s.getPosition().x, 
+                        s.getPosition().y+(levelHeight));
+            }
+        }
+        
+        topLvBound+=sectorHeight;
+        bottomLvBound+=sectorHeight;
+        topCtrBound+=sectorHeight;
+        bottomCtrBound+=sectorHeight;
+    }
+    
+    private void scrollDown(){
+        for(ScreenObject s:gameObjects){
+            if(s.getPosition().y>topCtrBound){
+                s.setPosition(s.getPosition().x, 
+                        s.getPosition().y-(levelHeight));
+            }
+        }
+        
+        topLvBound-=sectorHeight;
+        bottomLvBound-=sectorHeight;
+        topCtrBound-=sectorHeight;
+        bottomCtrBound-=sectorHeight;
+    }
+    
+    
+    
+    
+    
     
     public void shipFire(){
         gameObjects.add(ship.fireBullet());
@@ -224,4 +322,18 @@ public class ToroidLevel {
     public Ship getShip(){return ship;}
     public ArrayList getObjects(){return gameObjects;}
     public ArrayList getEnemies(){return enemies;}
+    
+    public int getHeight(){return levelHeight;}
+    public int getWidth(){return levelWidth;}
+    public float getSectorHeight(){return sectorHeight;}
+    public float getSectorWidth(){return sectorWidth;}
+    
+    public float getRightBound(){return rightLvBound;}
+    public float getLeftBound(){return leftLvBound;}
+    public float getTopBound(){return topLvBound;}
+    public float getBottomBound(){return bottomLvBound;}
+    public float getCtrRightBound(){return rightCtrBound;}
+    public float getCtrLeftBound(){return leftCtrBound;}
+    public float getCtrTopBound(){return topCtrBound;}
+    public float getCtrBottomBound(){return bottomCtrBound;}
 }
