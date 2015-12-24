@@ -41,14 +41,14 @@ public class Updater {
     public Updater(){
         random=new Random();    //for testing right now, may move this object later
         
-        level=new ToroidLevel();
+        level=new ToroidLevel(10000, 6500); //approx 9 screens by 9 screens
         
-        ship=new Ship(0,0,112,118);
+        //ship=new Ship(0,0,112,118);
         
-        gameObjects=new ArrayList();
-        enemies=new ArrayList();
+        //gameObjects=new ArrayList();
+        //enemies=new ArrayList();
         
-        generateLevel();
+        //generateLevel();
     }
     
     
@@ -56,6 +56,9 @@ public class Updater {
         
         fps=1/delta;
         
+        
+        level.update(delta);
+        /*
         //update game objects
         for(ScreenObject s:gameObjects){
             if(ship.getPosition().dst(s.getPosition())<700){    //avoid updating offscreen objects
@@ -74,6 +77,7 @@ public class Updater {
         
         checkCollisions();
         cleanUp(true);
+        */
     }
     
     private void checkCollisions(){
@@ -137,12 +141,12 @@ public class Updater {
     }
     
     public void shipFire(){
-        gameObjects.add(ship.fireBullet());
+        level.shipFire();
     }
     
     public float getFPS(){return fps;}
-    public Ship getShip(){return ship;}
-    public ArrayList getObjects(){return gameObjects;}
+    public Ship getShip(){return level.getShip();}
+    public ArrayList getObjects(){return level.getObjects();}
     
     
     private void generateLevel(){
