@@ -67,8 +67,6 @@ public class ToroidLevel {
         
         gameObjects=new ArrayList();
         enemies=new ArrayList();
-        
-        generate();
     }
     
     //***********************************************
@@ -177,11 +175,10 @@ public class ToroidLevel {
                     gameObjects.add(b);
                 }
             }
-            
+        } 
             
         checkCollisions();
         cleanUp(true);
-        }
     }
     
     public void shipFire(){
