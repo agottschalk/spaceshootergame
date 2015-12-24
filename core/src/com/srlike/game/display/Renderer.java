@@ -102,6 +102,13 @@ public class Renderer {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeType.Line);
         
+        //level bounds
+        shapeRenderer.setColor(0,0,1,1);
+        shapeRenderer.rect(updater.getLevel().getCtrLeftBound(), 
+                updater.getLevel().getCtrBottomBound(), 
+                updater.getLevel().getSectorWidth(), 
+                updater.getLevel().getSectorHeight());
+        
         //asteroids
         shapeRenderer.setColor(1,1,0,1);
         for (ScreenObject s:screenObjects){
