@@ -7,6 +7,9 @@ package com.srlike.game.display;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
+import com.srlike.game.display.Renderer;
+import com.srlike.game.display.Updater;
 import com.srlike.game.helpers.InputHandler;
 
 /**
@@ -23,7 +26,7 @@ public class GameScreen implements Screen {
         screenW=Gdx.graphics.getWidth();
         screenH=Gdx.graphics.getHeight();
         
-        updater=new Updater();
+        updater=new Updater(screenW, screenH);
         renderer=new Renderer(updater, screenW, screenH);
         
         Gdx.input.setInputProcessor(new InputHandler(updater, renderer));

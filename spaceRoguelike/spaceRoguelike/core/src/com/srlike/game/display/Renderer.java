@@ -22,9 +22,6 @@ import java.util.ArrayList;
  * @author Alex
  */
 public class Renderer {
-    //debug
-    private boolean showColliders;
-    
     private float screenW, screenH;
     
     private Updater updater;
@@ -59,8 +56,6 @@ public class Renderer {
         batch=new SpriteBatch();
         shapeRenderer=new ShapeRenderer();
         
-        showColliders=false;
-        
         loadObjects();
     }
     
@@ -93,21 +88,13 @@ public class Renderer {
         AssetLoader.arialFont.draw(batch, "FPS: "+updater.getFPS(), 230,50);
         
         batch.end();
-        if(showColliders){
-            drawCollisionBoxes();
-        }
+        
+        drawCollisionBoxes();
     }
     
     public void drawCollisionBoxes(){
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeType.Line);
-        
-        //level bounds
-        shapeRenderer.setColor(0,0,1,1);
-        shapeRenderer.rect(updater.getLevel().getCtrLeftBound(), 
-                updater.getLevel().getCtrBottomBound(), 
-                updater.getLevel().getSectorWidth(), 
-                updater.getLevel().getSectorHeight());
         
         //asteroids
         shapeRenderer.setColor(1,1,0,1);
@@ -137,12 +124,4 @@ public class Renderer {
     }
     
     public OrthographicCamera getCam(){return camera;}
-    
-    public void toggleColliders(){
-        if(showColliders){
-            showColliders=false;
-        }else{
-            showColliders=true;
-        }
-    }
 }

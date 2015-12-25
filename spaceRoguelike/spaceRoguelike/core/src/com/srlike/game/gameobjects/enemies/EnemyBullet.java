@@ -23,7 +23,7 @@ public class EnemyBullet extends ScreenObject {
     
     public EnemyBullet(float positionX, float positionY, 
             int width, int height,      //8 pixels by 8 pixels
-            Vector2 direction) 
+            Vector2 directionToShip) 
     {
         super(positionX, positionY, width, height, 2);
         image=AssetLoader.atlas.findRegion("redbullet");
@@ -31,7 +31,7 @@ public class EnemyBullet extends ScreenObject {
         type=Type.ENEMYBULLET;
         
         speed=300;
-        velocity.set(direction);
+        velocity.set(directionToShip);
         velocity.setLength(speed);
     }
 

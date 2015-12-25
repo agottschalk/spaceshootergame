@@ -45,11 +45,6 @@ public class InputHandler implements InputProcessor {
         if(keycode==Input.Keys.SPACE){
             ship.setEngine(true);
         }
-        
-        if(keycode==Input.Keys.TAB){
-            renderer.toggleColliders();
-        }
-        
         return true;
     }
 

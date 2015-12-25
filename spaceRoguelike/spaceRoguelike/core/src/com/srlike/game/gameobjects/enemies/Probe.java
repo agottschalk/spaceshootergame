@@ -23,6 +23,10 @@ public class Probe extends Enemy {
     private TextureRegion image;
     
     private final float speedCap;
+    private final int startingHp;
+    
+    private final float shotInterval;
+    private float shotTimer;
     
     
     public Probe(float positionX, float positionY, Ship ship, Random rand, 
@@ -34,85 +38,19 @@ public class Probe extends Enemy {
         subtype=Esubtype.PROBE;
         
         speedCap=80;
-        setStartingHp(50);
-        setShotInterval(1.5f);  //seconds
+        startingHp=50;
+        shotInterval=1.5f;  //seconds
         
-        hp=getStartingHp();
+        hp=startingHp;
+        shotTimer=0;
         
-        
-        ai=new ProbeAi(AiState.PASSIVE, ship, rand, level);
-        ai.init();
+        alterHeading(rand.nextInt(4));
     }
     
-    
-    
-    /*
-    ********************Probe's AI************************
-    */
-    private class ProbeAi extends StateAi{
-        public ProbeAi(AiState state, Ship s, Random r, 
-                ArrayList<ScreenObject> l){
-            super(state, s, r, l);
-        }
-
-        @Override
-        public void init() {
-            alterHeading(rand.nextInt(4));
-        }
-        
-        //vvvvvvvvvv**ai actions**vvvvvvvvvvv
-        @Override
-        protected void universal1(float delta){
-            alterHeading(rand.nextInt(100));        //small chance of changing direction
-        }
-        
-        @Override
-        protected void aggroAction(float delta){    //fires at ship if aggro
-            directionToShip.set(ship.getPosition().x-position.x, 
-                ship.getPosition().y-position.y);
-
-            shotTimer+=delta;
-            if(shotTimer>getShotInterval()){
-                shotTimer=0;
-                firing=rand.nextBoolean();
-            }
-
-            if(position.dst(ship.getPosition())>700){   //turns aggro off if too far away
-                state=AiState.PASSIVE;
-            }
-        }
-        //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        
-        private void alterHeading(int direction){
-            switch(direction){
-                case 0:            //left
-                    acceleration.x=-30;
-                    acceleration.y=0;
-                    break;
-                case 1:            //right
-                    acceleration.x=30;
-                    acceleration.y=0;
-                    break;
-                case 2:            //down
-                    acceleration.x=0;
-                    acceleration.y=-30;
-                    break;
-                case 3:           //up
-                    acceleration.x=0;
-                    acceleration.y=30;
-                    break;
-            }
-        }
-        
-        
-    }
-    /*
-    **********************************************************
-    */
     
     @Override
     public void update(float delta){
-        ai.doStuff(delta);
+        alterHeading(rand.nextInt(100));        //small chance of changing direction
         
         velocity.x+=acceleration.x*delta;
         velocity.y+=acceleration.y*delta;
@@ -121,10 +59,44 @@ public class Probe extends Enemy {
             velocity.setLength(speedCap);
         }
         
-        super.update(delta);    //ai picks new acceleration, move ship
+        super.update(delta);
+        
+        if(state==AiState.AGGRO){      //need to turn aggro off if too far away
+            directionToShip.set(ship.getPosition().x-position.x, 
+                ship.getPosition().y-position.y);
+            
+            shotTimer+=delta;
+            if(shotTimer>shotInterval){
+                shotTimer=0;
+                firing=rand.nextBoolean();
+            }
+            
+            if(position.dst(ship.getPosition())>700){
+                state=AiState.PASSIVE;
+            }
+        }
     }
     
-    
+    private void alterHeading(int direction){
+        switch(direction){
+            case 0:            //left
+                acceleration.x=-30;
+                acceleration.y=0;
+                break;
+            case 1:            //right
+                acceleration.x=30;
+                acceleration.y=0;
+                break;
+            case 2:            //down
+                acceleration.x=0;
+                acceleration.y=-30;
+                break;
+            case 3:           //up
+                acceleration.x=0;
+                acceleration.y=30;
+                break;
+        }
+    }
     
     @Override
     public void draw(SpriteBatch batch) {
@@ -141,10 +113,10 @@ public class Probe extends Enemy {
         switch(s.getType()){
             case BULLET:
                 hp-=5;
-                ai.setState(AiState.AGGRO);
+                state=AiState.AGGRO;
                 break;
             case SHIP:
-                hp-=getStartingHp();
+                hp-=startingHp;
                 break;
             case ASTEROID:
                 position.x+=velocity.x*lastDelta*(-1);  //bounce off asteroid
@@ -163,11 +135,18 @@ public class Probe extends Enemy {
         }
     }
     
+    @Override
+    public void changeState(AiState state){
+        this.state=state;
+        if(state==AiState.AGGRO){
+            firing=true;
+        }
+    }
 
     @Override
     public EnemyBullet fireBullet() {
         firing=false;
-        return new EnemyBullet(position.x, position.y, 8, 8, ai.getDirShip());
+        return new EnemyBullet(position.x, position.y, 8, 8, directionToShip);
     }
     
 }

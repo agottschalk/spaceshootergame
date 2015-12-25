@@ -3,47 +3,51 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.srlike.game.gameobjects.enemies;
+package com.srlike.game.gameobjects;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
-import com.srlike.game.gameobjects.ScreenObject;
 import com.srlike.game.helpers.AssetLoader;
 
 /**
  *
  * @author Alex
  */
-public class EnemyBullet extends ScreenObject {
-    private final float speed;
+public class ShipBullet extends ScreenObject {
+    private final float speed;      //gonna make this a constant
     
     private TextureRegion image;
     
     
-    public EnemyBullet(float positionX, float positionY, 
+    public ShipBullet(float positionX, float positionY, 
             int width, int height,      //8 pixels by 8 pixels
-            Vector2 direction) 
+            Vector2 direction)      //ship's direction vector
     {
         super(positionX, positionY, width, height, 2);
-        image=AssetLoader.atlas.findRegion("redbullet");
+        type=Type.BULLET;
         
-        type=Type.ENEMYBULLET;
+        speed=700;
         
-        speed=300;
+        //convert ship direction to bullet velocity
         velocity.set(direction);
         velocity.setLength(speed);
+        
+        image=AssetLoader.atlas.findRegion("bluebullet");
     }
-
+    
     @Override
-    public void draw(SpriteBatch batch) {
+    public void draw(SpriteBatch batch) {   //will make this more general later
         batch.draw(image, position.x-(width/2), position.y-(height/2));
     }
 
     @Override
     public void collide(ScreenObject s) {
         if(s.getType()==Type.ASTEROID
-                || s.getType()==Type.SHIP){
+                || s.getType()==Type.ENEMY){
             setAlive(false);
         }
     }

@@ -240,42 +240,42 @@ exYelFrag
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
-  index: 8
+  index: 7
 exYelFrag
   rotate: false
   xy: 2, 350
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
-  index: 12
+  index: 22
 exYelFrag
   rotate: false
   xy: 104, 350
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
-  index: 9
+  index: 8
 exYelFrag
   rotate: false
   xy: 206, 350
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
-  index: 22
+  index: 10
 exYelFrag
   rotate: false
   xy: 308, 350
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
-  index: 10
+  index: 9
 exYelFrag
   rotate: false
   xy: 410, 350
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
-  index: 7
+  index: 6
 exYelFrag
   rotate: false
   xy: 2, 452
@@ -289,7 +289,7 @@ exYelFrag
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
-  index: 6
+  index: 5
 exYelFrag
   rotate: false
   xy: 206, 452
@@ -310,77 +310,77 @@ exYelFrag
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
-  index: 5
+  index: 3
 exYelFrag
   rotate: false
   xy: 2, 554
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
-  index: 3
+  index: 11
 exYelFrag
   rotate: false
   xy: 104, 554
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
-  index: 11
+  index: 16
 exYelFrag
   rotate: false
   xy: 206, 554
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
-  index: 20
+  index: 18
 exYelFrag
   rotate: false
   xy: 308, 554
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
-  index: 16
+  index: 21
 exYelFrag
   rotate: false
   xy: 410, 554
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
-  index: 18
+  index: 20
 exYelFrag
   rotate: false
   xy: 2, 656
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
-  index: 15
+  index: 17
 exYelFrag
   rotate: false
   xy: 104, 656
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
-  index: 14
+  index: 12
 exYelFrag
   rotate: false
   xy: 206, 656
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
-  index: 17
+  index: 13
 exYelFrag
   rotate: false
   xy: 308, 656
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
-  index: 13
+  index: 15
 exYelFrag
   rotate: false
   xy: 410, 656
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
-  index: 21
+  index: 14
 probe
   rotate: false
   xy: 2, 758
@@ -388,23 +388,16 @@ probe
   orig: 109, 109
   offset: 0, 0
   index: -1
-lgFighter
-  rotate: false
-  xy: 113, 758
-  size: 112, 96
-  orig: 112, 96
-  offset: 0, 0
-  index: -1
 playership
   rotate: false
-  xy: 227, 758
+  xy: 113, 758
   size: 112, 118
   orig: 112, 118
   offset: 0, 0
   index: -1
 test_asteroid
   rotate: false
-  xy: 341, 758
+  xy: 227, 758
   size: 120, 120
   orig: 120, 120
   offset: 0, 0
