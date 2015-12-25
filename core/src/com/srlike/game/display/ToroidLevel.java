@@ -153,7 +153,23 @@ public class ToroidLevel {
         }
     }
     
-    
+    //under construction
+    private void cleanLevel(){      //removes asteroids that spawn on ship and enemies
+        for(ScreenObject s: gameObjects){
+            if(s.getType()==ScreenObject.Type.ASTEROID){
+                Iterator itr=gameObjects.listIterator(gameObjects.indexOf(s));
+                while(itr.hasNext()){       
+                    ScreenObject t=(ScreenObject) itr.next();
+                    if((t.getType()==ScreenObject.Type.ENEMY || t.getType()==ScreenObject.Type.SHIP)
+                            && overlaps(s,t)){
+                        s.setAlive(false);
+                    }
+                }
+            }
+        }
+        
+        cleanUp(false);
+    }
     
     
     //***************************************************
