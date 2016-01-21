@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.srlike.game.gameobjects.ScreenObject;
 import com.srlike.game.gameobjects.Ship;
+import com.srlike.game.gameobjects.environment.Explosion;
 import com.srlike.game.helpers.AssetLoader;
 import java.util.ArrayList;
 import java.util.Random;
@@ -170,4 +171,9 @@ public class Probe extends Enemy {
         return new EnemyBullet(position.x, position.y, 8, 8, ai.getDirShip());
     }
     
+    @Override
+    public Explosion explode(){
+        return new Explosion(position.x, position.y, 100, 100, 
+                Explosion.expSubtype.YELLOW);
+    }
 }

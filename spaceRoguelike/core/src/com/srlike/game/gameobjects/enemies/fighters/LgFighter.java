@@ -34,7 +34,7 @@ public class LgFighter extends Fighter{
         setStartingHp(70);
         setSpeed(120);
         setShotInterval(0.6f);
-        setRotationSpeed(100);
+        setRotationSpeed((float)(0.6*Math.PI));
         
         hp=getStartingHp();
         shotTimer=0;

@@ -5,7 +5,11 @@
  */
 package com.srlike.game.display;
 
+import com.badlogic.gdx.Gdx;
+import com.srlike.game.gameobjects.Macguffin;
+import com.srlike.game.gameobjects.Port;
 import com.srlike.game.gameobjects.ScreenObject;
+import com.srlike.game.gameobjects.ScreenObject.Type;
 import com.srlike.game.gameobjects.Ship;
 import com.srlike.game.gameobjects.enemies.Enemy;
 import com.srlike.game.gameobjects.enemies.EnemyBullet;
@@ -22,14 +26,18 @@ import java.util.Random;
  *
  * @author Alex
  * 
- * ********************UNDER CONSTRUCTION**************************
+ * 
  */
 public class ToroidLevel {
     private Random random;
     
     private Ship ship;
+    private Port port;
     private ArrayList<ScreenObject> gameObjects;        //holds everything
     private ArrayList<Enemy> enemies;
+    private int macguffinCount;
+    
+    private int offscreen;
     
     private int levelHeight;
     private int levelWidth;
@@ -45,7 +53,9 @@ public class ToroidLevel {
     private float rightCtrBound;
     private float leftCtrBound;
     
-    public ToroidLevel(int levelW, int levelH){
+    
+    
+    public ToroidLevel(int levelW, int levelH, Random r){
         levelWidth=levelW;
         levelHeight=levelH;
         sectorWidth=levelWidth/3;
@@ -61,9 +71,14 @@ public class ToroidLevel {
         topCtrBound=sectorHeight/2;
         bottomCtrBound=-(sectorHeight/2);
         
-        random=new Random();
+        offscreen=700;   //arbitrary for now, maybe switch to a rectangle to better approximate screen?
         
-        ship=new Ship(0,0,112,118);
+        random=r;
+        
+        ship=new Ship(0,0,this);
+        port=new Port(0, 0, ship, this);
+        
+        macguffinCount=0;
         
         gameObjects=new ArrayList();
         enemies=new ArrayList();
@@ -74,11 +89,13 @@ public class ToroidLevel {
     //***********************************************
     
     public void generate(){
+        gameObjects.add(port);
         gameObjects.add(ship);
         generateAsteroids();
         generateEnemies();
-        //add powerups
-        cleanUp(false);
+        generatePowerups();
+        
+        cleanLevel();
     }
     
     
@@ -113,37 +130,22 @@ public class ToroidLevel {
         
     }
     
+    
+    private void generatePowerups(){
+        for(int i=0; i<30; i++){
+            gameObjects.add(new Macguffin(random.nextInt(levelWidth)-(levelWidth/2), 
+                    random.nextInt(levelHeight)-(levelHeight/2)));
+            macguffinCount++;
+        }
+    }
+    
     private void cleanUp(boolean spawnDrops){
         //later this will also trigger explosions and powerup drops
         for(int i=0; i<gameObjects.size(); /*blank*/){
             if(!gameObjects.get(i).getAlive()){
                 if(spawnDrops){
-                    switch (gameObjects.get(i).getType()){
-                        case ASTEROID:
-                            gameObjects.add(new Explosion(
-                                gameObjects.get(i).getPosition().x, 
-                                gameObjects.get(i).getPosition().y,
-                                100, 100, Explosion.expSubtype.YELLOW));
-                            break;
-                        case ENEMY:
-                            gameObjects.add(new Explosion(
-                                gameObjects.get(i).getPosition().x, 
-                                gameObjects.get(i).getPosition().y,
-                                100, 100, Explosion.expSubtype.YELLOW));
-                            break;
-                        case BULLET:
-                            gameObjects.add(new Explosion(
-                                gameObjects.get(i).getPosition().x, 
-                                gameObjects.get(i).getPosition().y,
-                                40, 40, Explosion.expSubtype.BLUE));
-                            break;
-                        case ENEMYBULLET:
-                            gameObjects.add(new Explosion(
-                                gameObjects.get(i).getPosition().x, 
-                                gameObjects.get(i).getPosition().y,
-                                40, 40, Explosion.expSubtype.RED));
-                            break;
-                    }
+                    ScreenObject newExplosion=gameObjects.get(i).explode();
+                    if(newExplosion!=null){gameObjects.add(newExplosion);}
                 }
                 
                 gameObjects.remove(i);
@@ -153,14 +155,22 @@ public class ToroidLevel {
         }
     }
     
-    //under construction
-    private void cleanLevel(){      //removes asteroids that spawn on ship and enemies
-        for(ScreenObject s: gameObjects){
+    
+    
+    private void cleanLevel(){
+        for(ScreenObject s:enemies){   //moves enemies that spawn on port
+            if(s.getType()==ScreenObject.Type.ENEMY){
+                while(overlaps(s, port)){
+                    s.setPosition(random.nextInt(levelWidth)-(levelWidth/2), 
+                    random.nextInt(levelHeight)-(levelHeight/2));
+                }
+            }
+        }
+        
+        for(ScreenObject s: gameObjects){      //removes asteroids that spawn on port and enemies
             if(s.getType()==ScreenObject.Type.ASTEROID){
-                Iterator itr=gameObjects.listIterator(gameObjects.indexOf(s));
-                while(itr.hasNext()){       
-                    ScreenObject t=(ScreenObject) itr.next();
-                    if((t.getType()==ScreenObject.Type.ENEMY || t.getType()==ScreenObject.Type.SHIP)
+                for(ScreenObject t: gameObjects){
+                    if((t.getType()==ScreenObject.Type.ENEMY || t.getType()==ScreenObject.Type.PORT)
                             && overlaps(s,t)){
                         s.setAlive(false);
                     }
@@ -177,21 +187,28 @@ public class ToroidLevel {
     //***************************************************
     
     public void update(float delta){
+        //using normal 'for' loops, 'for each' creates an iterator each time and causes more gc
+        
         //see if any enemies have spawned bullets
-        for(Enemy e: enemies){
-            if(ship.getPosition().dst(e.getPosition())<700 && e.getFiring()){
+        for(int i=0; i<enemies.size(); i++){
+            Enemy e=enemies.get(i);
+            if(ship.getPosition().dst2(e.getPosition())<(offscreen*offscreen)
+                    && e.getFiring()){
                 EnemyBullet b=e.fireBullet();
                 if(b != null){      //quick error check since all enemies have this method but not all shoot
                     gameObjects.add(b);
+                }else{
+                    Gdx.app.log("level err", "tried to add null object");
                 }
             }
         }
         
         //update game objects
-        for(ScreenObject s:gameObjects){
-            if(ship.getPosition().dst(s.getPosition())<700){    //avoid updating offscreen objects
+        for(int i=0; i<gameObjects.size(); i++){
+            ScreenObject s=gameObjects.get(i);
+            edgeCheck(s);
+            if(ship.getPosition().dst2(s.getPosition())<(offscreen*offscreen)){    //avoid updating offscreen objects
                 s.update(delta);
-                edgeCheck(s);
             }
         }
         
@@ -204,7 +221,7 @@ public class ToroidLevel {
     private void edgeCheck(ScreenObject s){
         if(s.getPosition().x>rightLvBound){
             s.setPosition(s.getPosition().x-levelWidth, s.getPosition().y);
-        }else if(s.getPosition().y<leftLvBound){
+        }else if(s.getPosition().x<leftLvBound){
             s.setPosition(s.getPosition().x+levelWidth, s.getPosition().y);
         }
         
@@ -235,6 +252,7 @@ public class ToroidLevel {
     private void scrollRight(){
         //teleport objects ahead of ship
         for(ScreenObject s:gameObjects){
+            if(s.getType()==Type.SHIP){continue;}
             if(s.getPosition().x<leftCtrBound){
                 s.setPosition(s.getPosition().x+(levelWidth), 
                         s.getPosition().y);
@@ -246,10 +264,12 @@ public class ToroidLevel {
         leftLvBound+=sectorWidth;
         rightCtrBound+=sectorWidth;
         leftCtrBound+=sectorWidth;
+        
     }
     
     private void scrollLeft(){
         for(ScreenObject s:gameObjects){
+            if(s.getType()==Type.SHIP){continue;}
             if(s.getPosition().x>rightCtrBound){
                 s.setPosition(s.getPosition().x-(levelWidth), 
                         s.getPosition().y);
@@ -260,10 +280,12 @@ public class ToroidLevel {
         leftLvBound-=sectorWidth;
         rightCtrBound-=sectorWidth;
         leftCtrBound-=sectorWidth;
+        
     }
     
     private void scrollUp(){
         for(ScreenObject s:gameObjects){
+            if(s.getType()==Type.SHIP){continue;}
             if(s.getPosition().y<bottomCtrBound){
                 s.setPosition(s.getPosition().x, 
                         s.getPosition().y+(levelHeight));
@@ -278,6 +300,7 @@ public class ToroidLevel {
     
     private void scrollDown(){
         for(ScreenObject s:gameObjects){
+            if(s.getType()==Type.SHIP){continue;}
             if(s.getPosition().y>topCtrBound){
                 s.setPosition(s.getPosition().x, 
                         s.getPosition().y-(levelHeight));
@@ -309,10 +332,10 @@ public class ToroidLevel {
     //collision detection
     //*****************************************************
     private void checkCollisions(){
-        for(ScreenObject s: gameObjects){
-            Iterator itr=gameObjects.listIterator(gameObjects.indexOf(s));
-            while(itr.hasNext()){       
-                ScreenObject t=(ScreenObject) itr.next();
+        for(int i=0; i<gameObjects.size(); i++){
+            ScreenObject s=gameObjects.get(i);
+            for(int j=i; j<gameObjects.size(); j++){       
+                ScreenObject t=gameObjects.get(j);
                 if(s.getType()==ScreenObject.Type.ASTEROID && t.getType()==ScreenObject.Type.ASTEROID){
                     //continue
                 }else if(overlaps(s, t)){
@@ -324,13 +347,27 @@ public class ToroidLevel {
     }
     
     private boolean overlaps(ScreenObject g, ScreenObject h){
-        return ((g.getPosition().dst(h.getPosition())) < 
-                (g.getBoundingCircle().radius+h.getBoundingCircle().radius));
+        float dstSum=g.getBoundingCircle().radius+h.getBoundingCircle().radius;
+        return ((g.getPosition().dst2(h.getPosition())) < (dstSum*dstSum));
     }
     
     
     
-    
+    @Override
+    public String toString(){
+        return "level H:"+levelHeight
+                +"\nlevel W:"+levelWidth
+                +"\nsector H:"+sectorHeight
+                +"\nsector W:"+sectorWidth
+                +"\nLv top:"+topLvBound
+                +"\nLv bottom:"+bottomLvBound
+                +"\nLv right:"+rightLvBound
+                +"\nLv left:"+leftLvBound
+                +"\nSc top:"+topCtrBound
+                +"\nSc bottom:"+bottomCtrBound
+                +"\nSc right:"+rightCtrBound
+                +"\nSc left:"+leftCtrBound;
+    }
     
     //***********************************************
     //getters and setters
@@ -338,6 +375,7 @@ public class ToroidLevel {
     public Ship getShip(){return ship;}
     public ArrayList getObjects(){return gameObjects;}
     public ArrayList getEnemies(){return enemies;}
+    public int getMacguffinCount(){return macguffinCount;}
     
     public int getHeight(){return levelHeight;}
     public int getWidth(){return levelWidth;}

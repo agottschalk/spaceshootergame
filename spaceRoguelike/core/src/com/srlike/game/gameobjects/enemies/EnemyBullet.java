@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.srlike.game.gameobjects.ScreenObject;
+import com.srlike.game.gameobjects.environment.Explosion;
 import com.srlike.game.helpers.AssetLoader;
 
 /**
@@ -46,6 +47,12 @@ public class EnemyBullet extends ScreenObject {
                 || s.getType()==Type.SHIP){
             setAlive(false);
         }
+    }
+    
+    @Override
+    public Explosion explode(){
+        return new Explosion(position.x, position.y, 40, 40, 
+                Explosion.expSubtype.RED);
     }
     
 }

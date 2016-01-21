@@ -6,12 +6,11 @@
 package com.srlike.game.gameobjects;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.srlike.game.display.ToroidLevel;
 import com.srlike.game.helpers.AssetLoader;
 
 /**
@@ -21,30 +20,36 @@ import com.srlike.game.helpers.AssetLoader;
 public class Ship extends ScreenObject {
     private TextureRegion image;
     
-    private boolean engine;
+    private boolean engine=false;
     
     private Vector2 direction;
     
-    private final float acceleration;
-    private final float speedCap;
+    private final float acceleration=500f;
+    private final float speedCap=600f;
+    
+    private ToroidLevel level;
+    private int macguffinsCollected;
+    
+    //level end animation
+    private boolean locked=false;
+    private int framesRemaining=30;
     
     public Ship(float positionX, float positionY, //onscreen starting position, center of sprite
-        int width, int height)      //width and height of displayed sprite, helps with drawing)
+        ToroidLevel level)      //width and height of displayed sprite, helps with drawing)
     {
-        super(positionX, positionY, width, height, 32);
+        super(positionX, positionY, 112, 118, 32);
         type=Type.SHIP;
         
         image=AssetLoader.atlas.findRegion("playership");
         
+        this.level=level;
         
         //ship motion vectors
         direction=new Vector2(0f, 0f);
         
-        //ship motion constants
-        acceleration=500f;
-        speedCap=600f;
         
         hp=100;
+        macguffinsCollected=0;
     }
     
     @Override
@@ -84,11 +89,11 @@ public class Ship extends ScreenObject {
     public Vector2 getDirection(){return direction;}
     public boolean getEngine(){return engine;}
     public void setEngine(boolean e){engine=e;}
-    
+    public int getCollected(){return macguffinsCollected;}
     
     //for debugging, might not be in final game
-    public void setX(float x){position.x=x;}
-    public void setY(float y){position.y=y;}
+    //public void setX(float x){position.x=x;}
+    //public void setY(float y){position.y=y;}
 
     @Override
     public void draw(SpriteBatch batch) {
@@ -102,12 +107,35 @@ public class Ship extends ScreenObject {
 
     @Override
     public void collide(ScreenObject s) {
-        if(s.getType()==Type.ASTEROID 
-                || s.getType()==Type.ENEMY){
-            hp-=25;
-        }else if(s.getType()==Type.ENEMYBULLET){
-            hp-=10;
+        switch(s.getType()){
+            case ASTEROID:
+                hp-=25;
+                break;
+            case ENEMY:
+                hp-=25;
+                break;
+            case ENEMYBULLET:
+                hp-=10;
+                break;
+            case MACGUFFIN:
+                macguffinsCollected++;
+                break;
+            case PORT:
+                if(macguffinsCollected>=level.getMacguffinCount()
+                        && boundingCircle.contains(s.getPosition())){
+                    
+                //ends level
+                }
+                break;
         }
     }
     
+    @Override
+    public String toString(){
+        return "Ship X:"+position.x
+                +"\nShip Y:"+position.y;
+    }
+    
+    @Override
+    public void setPosition(float x, float y){}
 }

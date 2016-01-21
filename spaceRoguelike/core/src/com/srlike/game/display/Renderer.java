@@ -28,6 +28,8 @@ public class Renderer {
     private float screenW, screenH;
     
     private Updater updater;
+    private ToroidLevel level;
+    private Hud hud;
     
     private OrthographicCamera camera;
     private OrthographicCamera hudCam;
@@ -61,19 +63,17 @@ public class Renderer {
         
         showColliders=false;
         
-        loadObjects();
-    }
-    
-    
-    private void loadObjects(){
+        level=updater.getLevel();
         ship=updater.getShip();
         screenObjects=updater.getObjects();
+        hud=new Hud(updater, level, ship);
     }
+    
     
     public void render(){
         //render game screen image
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);   //clear screen
         
         camera.position.set(ship.getPosition().x, ship.getPosition().y, 0f);
         camera.update();
@@ -86,11 +86,9 @@ public class Renderer {
             s.draw(batch);
         }
         
-        
-        //hud
+        //drawing hud
         batch.setProjectionMatrix(hudCam.combined);
-        AssetLoader.arialFont.draw(batch, "Shields: "+ship.getHp(), 30,50);
-        AssetLoader.arialFont.draw(batch, "FPS: "+updater.getFPS(), 230,50);
+        hud.writeInfo(batch);
         
         batch.end();
         if(showColliders){
@@ -131,6 +129,16 @@ public class Renderer {
         shapeRenderer.setColor(0,1,1,1);
         shapeRenderer.circle(ship.getBoundingCircle().x, 
                 ship.getBoundingCircle().y, ship.getBoundingCircle().radius);
+        
+        //port
+        shapeRenderer.setColor(0,1,0,1);
+        for (ScreenObject s:screenObjects){
+            if(s.getType()==Type.PORT){
+                shapeRenderer.circle(s.getBoundingCircle().x, 
+                    s.getBoundingCircle().y, s.getBoundingCircle().radius);
+                break;
+            }
+        }
         
         
         shapeRenderer.end();

@@ -5,6 +5,7 @@
  */
 package com.srlike.game.gameobjects.enemies.fighters;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -12,6 +13,7 @@ import com.srlike.game.gameobjects.ScreenObject;
 import com.srlike.game.gameobjects.Ship;
 import com.srlike.game.gameobjects.enemies.Enemy;
 import com.srlike.game.gameobjects.enemies.EnemyBullet;
+import com.srlike.game.gameobjects.environment.Explosion;
 import com.srlike.game.helpers.AssetLoader;
 import java.util.ArrayList;
 import java.util.Random;
@@ -85,13 +87,13 @@ public class Fighter extends Enemy{
             if(rand.nextInt(250)==0){
                 changeHeading();
             }
-            chase(delta, true);
+            steer(delta, true);
         }
         
         @Override
         protected void aggroAction(float delta){
             targetVector.set(directionToShip);
-                chase(delta, true);
+                steer(delta, true);
                 if((shotTimer<0)
                     && ((directionToShip.angle()-velocity.angle()) < 15)
                     && ((directionToShip.angle()-velocity.angle()) > (-15))){
@@ -106,7 +108,7 @@ public class Fighter extends Enemy{
         @Override
         protected void recoveryAction(float delta){
             targetVector.set(directionToShip);
-                chase(delta, false);
+                steer(delta, false);
                 if(position.dst(ship.getPosition())>250){
                     state=AiState.AGGRO;
                 }
@@ -122,29 +124,29 @@ public class Fighter extends Enemy{
             targetVector.y=rand.nextInt(10)-5;
         }
         
-        private void chase(float delta, boolean chasing){
-            float target=velocity.angle(targetVector);
-            if(chasing){
-                if(target>0){
-                    steer(delta, 1);
-                }else{
-                    steer(delta, -1);
-                }
+        private void steer(float delta, boolean chasing){
+            //angles here are in radians
+            float target=velocity.angleRad(targetVector);
+            float turnAngle;
+            
+            if(target==0){
+                turnAngle=0;
             }else{
-                if(target>0){
-                    steer(delta, -1);
-                }else{
-                    steer(delta, 1);
+                turnAngle=rotationSpeed*delta*(target/Math.abs(target));
+            
+                if(Math.abs(target)<Math.abs(turnAngle)){
+                    turnAngle=target;
                 }
+            }
+            
+            if(chasing){
+                velocity.rotateRad(turnAngle);
+            }else{
+                velocity.rotateRad(-turnAngle);
             }
         }
         
-        private void steer(float delta, int direction){
-            //direction=1 for clockwise, -1 for counterclockwise
-            if(direction==1 || direction ==-1){
-                velocity.rotate(rotationSpeed*delta*(direction));   //switch rotation speed to radians if need to speed up performance
-            }
-        }
+
         
     }
     /*
@@ -206,6 +208,12 @@ public class Fighter extends Enemy{
         if(hp<1){
             setAlive(false);
         }
+    }
+    
+    @Override
+    public Explosion explode(){
+        return new Explosion(position.x, position.y, 100, 100, 
+                Explosion.expSubtype.YELLOW);
     }
     
     protected void simpleDeflect(ScreenObject s){

@@ -8,14 +8,17 @@ package com.srlike.game.gameobjects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
+import com.srlike.game.gameobjects.environment.Explosion;
 
 /**
  *
  * @author Alex
  */
 public abstract class ScreenObject {
-    public enum Type{SHIP, ASTEROID, BULLET, ENEMY, ENEMYBULLET, EXPLOSION}
+    public static enum Type{SHIP, ASTEROID, BULLET, ENEMY, LARGEENEMY, 
+    ENEMYBULLET, EXPLOSION, PORT, MACGUFFIN}
     
     
     protected int width;
@@ -30,6 +33,8 @@ public abstract class ScreenObject {
     protected Type type;
     
     protected Circle boundingCircle;
+    
+    protected Vector2 directionToObject;
     
     
     public ScreenObject(
@@ -52,6 +57,7 @@ public abstract class ScreenObject {
     //getters and setters
     public Vector2 getPosition(){return position;}
     public void setPosition(float x, float y){position.set(x, y);}
+    public void setPosition(Vector2 newPos){position.set(newPos);}
     public Vector2 getVelocity(){return velocity;}
     public void setVelocity(float x, float y){velocity.set(x, y);}
     public int getWidth(){return width;}
@@ -64,6 +70,13 @@ public abstract class ScreenObject {
     public Type getType(){return type;}
     public Circle getBoundingCircle(){return boundingCircle;}
     
+    public void findVectorTo(ScreenObject s){
+        //doing it this way avoids allocating new memory each time you need to compare objects
+        if(directionToObject==null){directionToObject=new Vector2();}
+        
+        directionToObject.set(s.getPosition().x-this.position.x,
+            s.getPosition().y-this.position.y);
+    }
     
     //update method, will be partially overwritten by subclases to include other necessary steps
     public void update(float delta){
@@ -77,7 +90,7 @@ public abstract class ScreenObject {
     public abstract void draw(SpriteBatch batch);   //implementation varies for animated and non animated sprites
     public abstract void collide(ScreenObject s);
     
-    //public abstract Explosion expode();       //this method could return appropriate explosion when object dies, but not all objects explode.  Should it be universal?
+    public Explosion explode(){return null;} //always error check when using since it can return a null value
     //public abstract Powerup dropPowerup();       //will create this once powerup classes are created
 
     

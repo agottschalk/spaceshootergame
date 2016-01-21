@@ -39,7 +39,7 @@ public class SmFighter extends Fighter{
         setStartingHp(50);
         setSpeed(130);
         setShotInterval(0.6f);
-        setRotationSpeed(90);
+        setRotationSpeed((float)(0.5*Math.PI));
         
         hp=getStartingHp();
         shotTimer=0;

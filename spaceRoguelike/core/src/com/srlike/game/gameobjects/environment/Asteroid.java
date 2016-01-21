@@ -63,4 +63,9 @@ public class Asteroid extends ScreenObject {
         }
     }
     
+    @Override
+    public Explosion explode(){
+        return new Explosion(position.x, position.y, 100, 100, 
+                Explosion.expSubtype.YELLOW);
+    }
 }

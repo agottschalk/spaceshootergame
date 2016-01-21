@@ -7,21 +7,25 @@ package com.srlike.game.display;
 
 import com.srlike.game.gameobjects.Ship;
 import java.util.ArrayList;
+import java.util.Random;
 
 
 /**
- * this class keeps track of all game objects during game play(called "world" in tutorial)
+ * 
  * @author Alex
  */
 public class Updater {
+    private Random random;
     //debug
     private float fps;
     
     private ToroidLevel level;
+    private Hud hud;
     
     
     public Updater(){
-        level=new ToroidLevel(10000, 6500); //approx 9 screens by 9 screens
+        random=new Random();
+        level=new ToroidLevel(10000, 6500, random); //approx 9 screens by 9 screens
         level.generate();
     }
     
