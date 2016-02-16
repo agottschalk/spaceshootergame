@@ -9,10 +9,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.srlike.game.display.ToroidLevel;
 import com.srlike.game.gameobjects.ScreenObject;
 import com.srlike.game.gameobjects.Ship;
 import com.srlike.game.gameobjects.environment.Explosion;
 import com.srlike.game.helpers.AssetLoader;
+import com.srlike.game.helpers.StateAi;
+import com.srlike.game.helpers.StateAi.AiState;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -26,10 +29,9 @@ public class Probe extends Enemy {
     private final float speedCap;
     
     
-    public Probe(float positionX, float positionY, Ship ship, Random rand, 
-            ArrayList<ScreenObject> level) {
+    public Probe(float positionX, float positionY, ToroidLevel level) {
         
-        super(positionX, positionY, 109, 109, 25f, ship, rand, level);
+        super(positionX, positionY, 109, 109, 25f);
         
         image=AssetLoader.atlas.findRegion("probe");
         subtype=Esubtype.PROBE;
@@ -40,10 +42,14 @@ public class Probe extends Enemy {
         
         hp=getStartingHp();
         
+        collisionDamage=34;
         
-        ai=new ProbeAi(AiState.PASSIVE, ship, rand, level);
+        ai=new ProbeAi(AiState.PASSIVE, level);
         ai.init();
     }
+
+    @Override
+    public void dropPowerups(ArrayList<ScreenObject> level) {}  //probe currently does not drop any powerups
     
     
     
@@ -51,9 +57,8 @@ public class Probe extends Enemy {
     ********************Probe's AI************************
     */
     private class ProbeAi extends StateAi{
-        public ProbeAi(AiState state, Ship s, Random r, 
-                ArrayList<ScreenObject> l){
-            super(state, s, r, l);
+        public ProbeAi(AiState state, ToroidLevel l){
+            super(state, Probe.this, l);
         }
 
         @Override
@@ -141,11 +146,11 @@ public class Probe extends Enemy {
     public void collide(ScreenObject s) {
         switch(s.getType()){
             case BULLET:
-                hp-=5;
+                hp-=s.dealDamage();
                 ai.setState(AiState.AGGRO);
                 break;
             case SHIP:
-                hp-=getStartingHp();
+                hp-=s.dealDamage();
                 break;
             case ASTEROID:
                 position.x+=velocity.x*lastDelta*(-1);  //bounce off asteroid
@@ -166,14 +171,15 @@ public class Probe extends Enemy {
     
 
     @Override
-    public EnemyBullet fireBullet() {
+    public void fireBullet(ArrayList<ScreenObject> level) {
         firing=false;
-        return new EnemyBullet(position.x, position.y, 8, 8, ai.getDirShip());
+        level.add(new EnemyBullet(position.x, position.y, 8, 8, 
+                ai.getDirShip()));
     }
     
     @Override
-    public Explosion explode(){
-        return new Explosion(position.x, position.y, 100, 100, 
-                Explosion.expSubtype.YELLOW);
+    public void explode(ArrayList<ScreenObject> level){
+        level.add(new Explosion(position.x, position.y, 100, 100, 
+                Explosion.expSubtype.YELLOW));
     }
 }

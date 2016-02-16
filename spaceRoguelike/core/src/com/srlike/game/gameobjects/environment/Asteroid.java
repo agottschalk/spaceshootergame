@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.srlike.game.gameobjects.ScreenObject;
 import com.srlike.game.helpers.AssetLoader;
+import java.util.ArrayList;
 
 /**
  *
@@ -27,9 +28,9 @@ public class Asteroid extends ScreenObject {
         image=AssetLoader.atlas.findRegion("test_asteroid");
         
         hp=100;
+        collisionDamage=34;
     }
     
-    //getters and setters
     
     
     @Override
@@ -49,11 +50,11 @@ public class Asteroid extends ScreenObject {
     @Override
     public void collide(ScreenObject s) {
         switch(s.getType()){
-            case SHIP: hp=0;
+            case SHIP: hp-=s.dealDamage();
                 break;
-            case BULLET:  hp-=5;
+            case BULLET:  hp-=s.dealDamage();
                 break;
-            case ENEMYBULLET:  hp-=10;
+            case ENEMYBULLET:  hp-=s.dealDamage();
                 break;
         }
         
@@ -63,9 +64,16 @@ public class Asteroid extends ScreenObject {
         }
     }
     
+    
     @Override
-    public Explosion explode(){
-        return new Explosion(position.x, position.y, 100, 100, 
-                Explosion.expSubtype.YELLOW);
+    public void fireBullet(ArrayList<ScreenObject> level) {}//does not fire bullets
+
+    @Override
+    public void explode(ArrayList<ScreenObject> level) {
+        level.add(new Explosion(position.x, position.y, 100, 100, 
+                Explosion.expSubtype.YELLOW));
     }
+
+    @Override
+    public void dropPowerups(ArrayList<ScreenObject> level) {}//does not drop powerups
 }

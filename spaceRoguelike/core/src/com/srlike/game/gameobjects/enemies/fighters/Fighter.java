@@ -9,12 +9,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.srlike.game.display.ToroidLevel;
 import com.srlike.game.gameobjects.ScreenObject;
 import com.srlike.game.gameobjects.Ship;
 import com.srlike.game.gameobjects.enemies.Enemy;
 import com.srlike.game.gameobjects.enemies.EnemyBullet;
 import com.srlike.game.gameobjects.environment.Explosion;
 import com.srlike.game.helpers.AssetLoader;
+import com.srlike.game.helpers.StateAi;
+import com.srlike.game.helpers.StateAi.AiState;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -27,26 +30,35 @@ public class Fighter extends Enemy{
     
     
     private float speed;
-    
     private float rotationSpeed;
     
     protected Vector2 lastPos;
     
+    private boolean following;
     
     public Fighter(float positionX, float positionY, 
             int width, int height, float radius,
-            Ship ship, Random rand, 
-            ArrayList<ScreenObject> level) {
-        
-        super(positionX, positionY, 
-                width, height, radius,
-                ship, rand, 
-                level);
-        
-        ai=new FighterAi(AiState.PASSIVE, ship, rand, level);
-        lastPos=new Vector2(position);
+            ToroidLevel level) {
+        this(positionX, positionY, width, height, radius, level, false);
     }
     
+    public Fighter(float positionX, float positionY, 
+            int width, int height, float radius,
+            ToroidLevel level, boolean following) {
+        
+        super(positionX, positionY, 
+                width, height, radius);
+        
+        collisionDamage=34;
+        
+        this.following=following;
+        ai=new FighterAi(AiState.PASSIVE, level);
+        
+        lastPos=new Vector2(position);
+    }
+
+    @Override
+    public void dropPowerups(ArrayList<ScreenObject> level) {}  //fighter currently does not drop any powerups    
     
     
     /*
@@ -62,9 +74,8 @@ public class Fighter extends Enemy{
     protected class FighterAi extends StateAi{
         private Vector2 targetVector;
         
-        public FighterAi(AiState state, Ship s, Random r, 
-                ArrayList<ScreenObject> l){
-            super(state, s, r, l);
+        public FighterAi(AiState state, ToroidLevel l){
+            super(state, Fighter.this, l);
         }
         
         @Override
@@ -84,7 +95,7 @@ public class Fighter extends Enemy{
         //vvvvvvvvvvv**ai actions**vvvvvvvvvvv
         @Override
         protected void passiveAction(float delta){
-            if(rand.nextInt(250)==0){
+            if(!following && rand.nextInt(250)==0){
                 changeHeading();
             }
             steer(delta, true);
@@ -146,8 +157,14 @@ public class Fighter extends Enemy{
             }
         }
         
-
+        //allows fighter to be steered by external source
+        public void setTarget(float x, float y){
+            targetVector.set(x, y);
+        }
         
+        public void setTarget(Vector2 v){
+            setTarget(v.x, v.y);
+        }
     }
     /*
     ********************************************************
@@ -174,10 +191,11 @@ public class Fighter extends Enemy{
     
     
     @Override
-    public EnemyBullet fireBullet() {
+    public void fireBullet(ArrayList<ScreenObject> level) {
         shotTimer=getShotInterval(); //reset timer
         firing=false;
-        return new EnemyBullet(position.x, position.y, 8, 8, ai.getDirShip()); //velocity doubles as heading
+        level.add(new EnemyBullet(position.x, position.y, 8, 8, 
+                ai.getDirShip())); //velocity doubles as heading
     }
 
     @Override
@@ -193,9 +211,9 @@ public class Fighter extends Enemy{
     @Override
     public void collide(ScreenObject s) {
         switch(s.getType()){
-            case SHIP: hp=0;
+            case SHIP: hp-=s.dealDamage();
                 break;
-            case BULLET:  hp-=5;
+            case BULLET:  hp-=s.dealDamage();
                 ai.setState(AiState.AGGRO);
                 break;
             case ASTEROID:
@@ -211,19 +229,18 @@ public class Fighter extends Enemy{
     }
     
     @Override
-    public Explosion explode(){
-        return new Explosion(position.x, position.y, 100, 100, 
-                Explosion.expSubtype.YELLOW);
+    public void explode(ArrayList<ScreenObject> level){
+        level.add(new Explosion(position.x, position.y, 100, 100, 
+                Explosion.expSubtype.YELLOW));
     }
     
     protected void simpleDeflect(ScreenObject s){
-        Vector2 lineFromS=new Vector2(position.x-s.getPosition().x, 
-            position.y-s.getPosition().y);
-        float oldDst=lineFromS.len();
+        Vector2 positionChange=new Vector2(setVectorTo(s));
+        float oldDst=positionChange.len();
         float newDst=this.boundingCircle.radius+s.getBoundingCircle().radius;
-        lineFromS.setLength(newDst-oldDst);
-        
-        position.add(lineFromS);
+        positionChange.setLength(oldDst-newDst);
+        positionChange.scl(-1);
+        position.add(positionChange);
     }
     
     
@@ -234,4 +251,7 @@ public class Fighter extends Enemy{
     protected void setSpeed(float speed){this.speed=speed;}
     protected float getSpeed(){return speed;}
     protected void setRotationSpeed(float rotSpeed){rotationSpeed=rotSpeed;}
+    
+    public FighterAi getAi(){return (FighterAi)ai;}//fighters only--fighter ai has specific methods allowing it to be controlled by outside objects
+    
 }

@@ -9,6 +9,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.srlike.game.display.ToroidLevel;
 import com.srlike.game.gameobjects.ScreenObject;
 import com.srlike.game.gameobjects.Ship;
 import com.srlike.game.gameobjects.enemies.Enemy;
@@ -24,27 +25,26 @@ import java.util.Random;
 public class SmFighter extends Fighter{
     
     
-    public SmFighter(float positionX, float positionY, Ship ship, Random rand, 
-            ArrayList<ScreenObject> level) {
+    public SmFighter(float positionX, float positionY, ToroidLevel level) {
         
         super(positionX, positionY, 
                 100, 97, //width, height
                 20f, //collision radius
-                ship, rand, level);
+                level);
         
         setSprite(AssetLoader.atlas.findRegion("smallfighter"));
         
         subtype=Esubtype.SMALLFIGHTER;
         
-        setStartingHp(50);
+        setStartingHp(30);
         setSpeed(130);
-        setShotInterval(0.6f);
+        setShotInterval(1.0f);
         setRotationSpeed((float)(0.5*Math.PI));
         
         hp=getStartingHp();
         shotTimer=0;
         
-        ai.init();
+        ai.init();  //ai can't initialize properly until all ship stats are set
     }
     
 }

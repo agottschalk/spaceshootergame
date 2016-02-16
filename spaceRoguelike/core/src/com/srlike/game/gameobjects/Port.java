@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.srlike.game.display.ToroidLevel;
 import com.srlike.game.helpers.AssetLoader;
+import java.util.ArrayList;
 
 /**
  *
@@ -44,6 +45,15 @@ public class Port extends ScreenObject{
             
         
     }
+
+    @Override
+    public void fireBullet(ArrayList<ScreenObject> level) {}//does not fire bullets
+
+    @Override
+    public void explode(ArrayList<ScreenObject> level) {}//does not explode
+
+    @Override
+    public void dropPowerups(ArrayList<ScreenObject> level) {}//does not drop powerups
     
     
 }

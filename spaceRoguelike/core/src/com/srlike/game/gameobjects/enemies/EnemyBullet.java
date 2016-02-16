@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.srlike.game.gameobjects.ScreenObject;
 import com.srlike.game.gameobjects.environment.Explosion;
 import com.srlike.game.helpers.AssetLoader;
+import java.util.ArrayList;
 
 /**
  *
@@ -31,6 +32,8 @@ public class EnemyBullet extends ScreenObject {
         
         type=Type.ENEMYBULLET;
         
+        collisionDamage=10;
+        
         speed=300;
         velocity.set(direction);
         velocity.setLength(speed);
@@ -50,9 +53,14 @@ public class EnemyBullet extends ScreenObject {
     }
     
     @Override
-    public Explosion explode(){
-        return new Explosion(position.x, position.y, 40, 40, 
-                Explosion.expSubtype.RED);
+    public void fireBullet(ArrayList<ScreenObject> level) {}//does not fire bullets
+
+    @Override
+    public void explode(ArrayList<ScreenObject> level) {
+        level.add(new Explosion(position.x, position.y, 40, 40, 
+                Explosion.expSubtype.RED));
     }
-    
+
+    @Override
+    public void dropPowerups(ArrayList<ScreenObject> level) {}//does not drop powerups
 }

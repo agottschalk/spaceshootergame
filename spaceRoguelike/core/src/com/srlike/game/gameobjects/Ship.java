@@ -11,7 +11,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.srlike.game.display.ToroidLevel;
+import com.srlike.game.gameobjects.environment.Explosion;
 import com.srlike.game.helpers.AssetLoader;
+import java.util.ArrayList;
 
 /**
  *
@@ -47,6 +49,7 @@ public class Ship extends ScreenObject {
         //ship motion vectors
         direction=new Vector2(0f, 0f);
         
+        collisionDamage=9999;
         
         hp=100;
         macguffinsCollected=0;
@@ -83,8 +86,6 @@ public class Ship extends ScreenObject {
         rotation=direction.angle();
     }
     
-    public ShipBullet fireBullet(){return new ShipBullet(position.x, 
-                position.y, 8, 8, direction);}
     
     public Vector2 getDirection(){return direction;}
     public boolean getEngine(){return engine;}
@@ -109,13 +110,13 @@ public class Ship extends ScreenObject {
     public void collide(ScreenObject s) {
         switch(s.getType()){
             case ASTEROID:
-                hp-=25;
+                hp-=s.dealDamage();
                 break;
             case ENEMY:
-                hp-=25;
+                hp-=s.dealDamage();
                 break;
             case ENEMYBULLET:
-                hp-=10;
+                hp-=s.dealDamage();
                 break;
             case MACGUFFIN:
                 macguffinsCollected++;
@@ -123,7 +124,7 @@ public class Ship extends ScreenObject {
             case PORT:
                 if(macguffinsCollected>=level.getMacguffinCount()
                         && boundingCircle.contains(s.getPosition())){
-                    
+                    Gdx.app.log("Ship", "level over");
                 //ends level
                 }
                 break;
@@ -138,4 +139,18 @@ public class Ship extends ScreenObject {
     
     @Override
     public void setPosition(float x, float y){}
+
+    @Override
+    public void fireBullet(ArrayList<ScreenObject> level) {
+        level.add(new ShipBullet(position.x, position.y, 8, 8, direction));
+    }
+
+    @Override
+    public void explode(ArrayList<ScreenObject> level) {
+        level.add(new Explosion(position.x, position.y, 100, 100, 
+                Explosion.expSubtype.YELLOW));
+    }
+
+    @Override
+    public void dropPowerups(ArrayList<ScreenObject> level) {}//does not drop powerups
 }

@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.srlike.game.gameobjects.environment.Explosion;
 import com.srlike.game.helpers.AssetLoader;
+import java.util.ArrayList;
 
 /**
  *
@@ -31,8 +32,9 @@ public class ShipBullet extends ScreenObject {
         super(positionX, positionY, width, height, 2);
         type=Type.BULLET;
         
-        speed=700;
+        collisionDamage=10;
         
+        speed=700;
         //convert ship direction to bullet velocity
         velocity.set(direction);
         velocity.setLength(speed);
@@ -53,9 +55,16 @@ public class ShipBullet extends ScreenObject {
         }
     }
     
+    
     @Override
-    public Explosion explode(){
-        return new Explosion(position.x, position.y, 40, 40, 
-                Explosion.expSubtype.BLUE);
+    public void fireBullet(ArrayList<ScreenObject> level) {}//does not fire bullets
+
+    @Override
+    public void explode(ArrayList<ScreenObject> level) {
+        level.add(new Explosion(position.x, position.y, 40, 40, 
+                Explosion.expSubtype.BLUE));
     }
+
+    @Override
+    public void dropPowerups(ArrayList<ScreenObject> level) {}//does not drop powerups
 }

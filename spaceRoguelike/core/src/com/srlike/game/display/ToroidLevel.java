@@ -109,22 +109,19 @@ public class ToroidLevel {
     private void generateEnemies(){
         for(int i=0; i<50; i++){
             enemies.add(new Probe(random.nextInt(levelWidth)-(levelWidth/2), 
-                    random.nextInt(levelHeight)-(levelHeight/2), ship, random, 
-                    gameObjects));
+                    random.nextInt(levelHeight)-(levelHeight/2), this));
             gameObjects.add(enemies.get(i));
         }
         
         for(int i=0; i<180; i++){
             enemies.add(new SmFighter(random.nextInt(levelWidth)-(levelWidth/2), 
-                    random.nextInt(levelHeight)-(levelHeight/2), ship, random, 
-                    gameObjects));
+                    random.nextInt(levelHeight)-(levelHeight/2), this));
             gameObjects.add(enemies.get(enemies.size()-1));
         }
         
         for(int i=0; i<200; i++){
             enemies.add(new LgFighter(random.nextInt(levelWidth)-(levelWidth/2), 
-                    random.nextInt(levelHeight)-(levelHeight/2), ship, random, 
-                    gameObjects));
+                    random.nextInt(levelHeight)-(levelHeight/2), this));
             gameObjects.add(enemies.get(enemies.size()-1));
         }
         
@@ -144,8 +141,7 @@ public class ToroidLevel {
         for(int i=0; i<gameObjects.size(); /*blank*/){
             if(!gameObjects.get(i).getAlive()){
                 if(spawnDrops){
-                    ScreenObject newExplosion=gameObjects.get(i).explode();
-                    if(newExplosion!=null){gameObjects.add(newExplosion);}
+                    gameObjects.get(i).explode(gameObjects);
                 }
                 
                 gameObjects.remove(i);
@@ -189,19 +185,6 @@ public class ToroidLevel {
     public void update(float delta){
         //using normal 'for' loops, 'for each' creates an iterator each time and causes more gc
         
-        //see if any enemies have spawned bullets
-        for(int i=0; i<enemies.size(); i++){
-            Enemy e=enemies.get(i);
-            if(ship.getPosition().dst2(e.getPosition())<(offscreen*offscreen)
-                    && e.getFiring()){
-                EnemyBullet b=e.fireBullet();
-                if(b != null){      //quick error check since all enemies have this method but not all shoot
-                    gameObjects.add(b);
-                }else{
-                    Gdx.app.log("level err", "tried to add null object");
-                }
-            }
-        }
         
         //update game objects
         for(int i=0; i<gameObjects.size(); i++){
@@ -209,6 +192,7 @@ public class ToroidLevel {
             edgeCheck(s);
             if(ship.getPosition().dst2(s.getPosition())<(offscreen*offscreen)){    //avoid updating offscreen objects
                 s.update(delta);
+                if(s.getFiring()){s.fireBullet(gameObjects);}
             }
         }
         
@@ -319,7 +303,7 @@ public class ToroidLevel {
     
     
     public void shipFire(){
-        gameObjects.add(ship.fireBullet());
+        ship.fireBullet(gameObjects);
     }
     
     
@@ -376,6 +360,7 @@ public class ToroidLevel {
     public ArrayList getObjects(){return gameObjects;}
     public ArrayList getEnemies(){return enemies;}
     public int getMacguffinCount(){return macguffinCount;}
+    public Random getRand(){return random;}
     
     public int getHeight(){return levelHeight;}
     public int getWidth(){return levelWidth;}

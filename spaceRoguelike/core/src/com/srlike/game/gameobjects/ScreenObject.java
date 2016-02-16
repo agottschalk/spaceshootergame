@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 import com.srlike.game.gameobjects.environment.Explosion;
+import java.util.ArrayList;
 
 /**
  *
@@ -31,10 +32,12 @@ public abstract class ScreenObject {
     protected int hp;
     private boolean alive;
     protected Type type;
+    protected boolean firing;
+    protected int collisionDamage;
     
     protected Circle boundingCircle;
     
-    protected Vector2 directionToObject;
+    protected Vector2 vectorToObject;
     
     
     public ScreenObject(
@@ -48,6 +51,7 @@ public abstract class ScreenObject {
         this.width=width;
         this.height=height;
         alive=true;
+        firing=false;
         
         boundingCircle=new Circle(position, radius);
         
@@ -67,15 +71,18 @@ public abstract class ScreenObject {
     public void setHp(int h){hp=h;}
     public boolean getAlive(){return alive;}
     public void setAlive(boolean b){alive=b;}
+    public boolean getFiring(){return firing;}
+    public int dealDamage(){return collisionDamage;}
     public Type getType(){return type;}
     public Circle getBoundingCircle(){return boundingCircle;}
     
-    public void findVectorTo(ScreenObject s){
+    public Vector2 setVectorTo(ScreenObject s){
         //doing it this way avoids allocating new memory each time you need to compare objects
-        if(directionToObject==null){directionToObject=new Vector2();}
+        if(vectorToObject==null){vectorToObject=new Vector2();}
         
-        directionToObject.set(s.getPosition().x-this.position.x,
+        vectorToObject.set(s.getPosition().x-this.position.x,
             s.getPosition().y-this.position.y);
+        return vectorToObject;
     }
     
     //update method, will be partially overwritten by subclases to include other necessary steps
@@ -90,8 +97,9 @@ public abstract class ScreenObject {
     public abstract void draw(SpriteBatch batch);   //implementation varies for animated and non animated sprites
     public abstract void collide(ScreenObject s);
     
-    public Explosion explode(){return null;} //always error check when using since it can return a null value
-    //public abstract Powerup dropPowerup();       //will create this once powerup classes are created
+    public abstract void fireBullet(ArrayList<ScreenObject> level);
+    public abstract void explode(ArrayList<ScreenObject> level);
+    public abstract void dropPowerups(ArrayList<ScreenObject> level);      //will create this once powerup classes are created
 
     
     

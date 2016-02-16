@@ -6,6 +6,7 @@
 package com.srlike.game.gameobjects.enemies.fighters;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.srlike.game.display.ToroidLevel;
 import com.srlike.game.gameobjects.ScreenObject;
 import com.srlike.game.gameobjects.Ship;
 import com.srlike.game.gameobjects.enemies.EnemyBullet;
@@ -18,28 +19,27 @@ import java.util.Random;
  * @author Alex
  */
 public class LgFighter extends Fighter{
+    private int shotCount;
     
-    
-    public LgFighter(float positionX, float positionY, Ship ship, Random rand, 
-            ArrayList<ScreenObject> level) {
+    public LgFighter(float positionX, float positionY, ToroidLevel level) {
         
         super(positionX, positionY, 
-                112, 96, 22,
-                ship, rand, level);
+                112, 96, 22, level);
         
         setSprite(AssetLoader.atlas.findRegion("lgFighter"));
         
         subtype=Esubtype.LARGEFIGHTER;
         
-        setStartingHp(70);
+        setStartingHp(40);
         setSpeed(120);
-        setShotInterval(0.6f);
+        setShotInterval(1.2f);
         setRotationSpeed((float)(0.6*Math.PI));
         
         hp=getStartingHp();
         shotTimer=0;
+        shotCount=0;
         
-        ai.init();
+        ai.init();  //ai can't initialize properly until all ship stats are set
     }
     
     
@@ -55,9 +55,18 @@ public class LgFighter extends Fighter{
     
     //lg will fire stronger bullets than small, may change this method in superclass
     @Override
-    public EnemyBullet fireBullet() {
-        shotTimer=getShotInterval(); //reset timer
-        firing=false;
-        return new EnemyBullet(position.x, position.y, 8, 8, velocity);
+    public void fireBullet(ArrayList<ScreenObject> level) {
+        if(shotTimer<0){
+            level.add(new EnemyBullet(position.x, position.y, 8, 8, velocity));
+            
+            if(shotCount<2){
+                shotCount++;
+                shotTimer=0.07f;
+            } else {
+                shotCount=0;
+                shotTimer=getShotInterval();    //reset timer
+                firing=false;
+            }
+        }
     }
 }

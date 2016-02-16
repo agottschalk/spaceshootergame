@@ -4,14 +4,17 @@
   <auxiliary>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-      <group>
-        <file>file:/C:/Users/Alex/Documents/NetBeansProjects/spaceRoguelike/desktop/src/com/srlike/game/desktop/DesktopLauncher.java</file>
-      </group>
+      <group/>
     </open-files>
     <editor-bookmarks lastBookmarkId="0" xmlns="http://www.netbeans.org/ns/editor-bookmarks/2"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
       <group>
-        <file>file:/C:/Users/Alex/Documents/NetBeansProjects/spaceRoguelike/desktop/src/com/srlike/game/desktop/DesktopLauncher.java</file>
+        <file>file:/C:/Users/Alex/Documents/NetBeansProjects/spaceRoguelike/core/src/com/srlike/game/gameobjects/enemies/fighters/SmFighter.java</file>
+        <file>file:/C:/Users/Alex/Documents/NetBeansProjects/spaceRoguelike/core/src/com/srlike/game/gameobjects/enemies/fighters/LgFighter.java</file>
+        <file>file:/C:/Users/Alex/Documents/NetBeansProjects/spaceRoguelike/core/src/com/srlike/game/gameobjects/enemies/Elite.java</file>
+        <file>file:/C:/Users/Alex/Documents/NetBeansProjects/spaceRoguelike/core/src/com/srlike/game/display/ToroidLevel.java</file>
+        <file>file:/C:/Users/Alex/Documents/NetBeansProjects/spaceRoguelike/core/src/com/srlike/game/gameobjects/enemies/fighters/Fighter.java</file>
+        <file>file:/C:/Users/Alex/Documents/NetBeansProjects/spaceRoguelike/core/src/com/srlike/game/gameobjects/enemies/EnemyBullet.java</file>
       </group>
     </open-files>
   </auxiliary>
