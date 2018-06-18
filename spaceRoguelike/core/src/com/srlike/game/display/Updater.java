@@ -11,7 +11,7 @@ import java.util.Random;
 
 
 /**
- * 
+ * Initializes the level and calls the update cycle once every frame
  * @author Alex
  */
 public class Updater {

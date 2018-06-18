@@ -22,7 +22,11 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- *
+ * Base class for fighter type enemies.  Fighters fly along an initial
+ * trajectory which changes periodically.  When engaged, that trajectory changes
+ * to always point towards the player and the fighter begins firing continuously.
+ * When the fighter gets close to the player, it will veer away to try and 
+ * avoid colliding before circling back for another attack, simulating a dogfight.
  * @author Alex
  */
 public class Fighter extends Enemy{
@@ -234,6 +238,10 @@ public class Fighter extends Enemy{
                 Explosion.expSubtype.YELLOW));
     }
     
+    /*
+    when the fighter runs into a solid object that does not destroy is, it is
+    deflected to the side
+    */
     protected void simpleDeflect(ScreenObject s){
         Vector2 positionChange=new Vector2(setVectorTo(s));
         float oldDst=positionChange.len();
