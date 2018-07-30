@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.srlike.game.helpers;
+package com.srlike.game.gameobjects.enemies;
 
 import com.badlogic.gdx.math.Vector2;
 import com.srlike.game.display.ToroidLevel;

@@ -9,43 +9,51 @@ import com.srlike.game.gameobjects.Ship;
 import java.util.ArrayList;
 import java.util.Random;
 
-
 /**
- * Initializes the level and calls the update cycle once every frame
+ * Updates the state of all objects shown on screen each update cycle.  Can skip
+ * updating certain objects which are not in use (ie. skipping updating objects
+ * in the level while the game is paused)
+ *
  * @author Alex
  */
 public class Updater {
+
     private Random random;
-    //debug
+    //debug tools
     private float fps;
-    
+
     private ToroidLevel level;
-    private Hud hud;
-    
-    
-    public Updater(){
-        random=new Random();
-        level=new ToroidLevel(10000, 6500, random); //approx 9 screens by 9 screens
-        level.generate();
+
+    public Updater(ToroidLevel level) {
+        random = new Random();
+        this.level = level;
     }
-    
-    
-    public void update(float delta){
-        
-        fps=1/delta;
-        
+
+    public void update(float delta) {
+
+        fps = 1 / delta;
+
         level.update(delta);
     }
-    
-    
-    public void shipFire(){
+
+    public void shipFire() {
         level.shipFire();
     }
-    
-    
-    public float getFPS(){return fps;}
-    public Ship getShip(){return level.getShip();}
-    public ArrayList getObjects(){return level.getObjects();}
-    public ToroidLevel getLevel(){return level;}
-    
+
+    public float getFPS() {
+        return fps;
+    }
+
+    public Ship getShip() {
+        return level.getShip();
+    }
+
+    public ArrayList getObjects() {
+        return level.getObjects();
+    }
+
+    public ToroidLevel getLevel() {
+        return level;
+    }
+
 }

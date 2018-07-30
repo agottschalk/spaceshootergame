@@ -10,8 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.srlike.game.display.ToroidLevel;
 import com.srlike.game.gameobjects.ScreenObject;
 import com.srlike.game.gameobjects.Ship;
-import com.srlike.game.helpers.StateAi;
-import com.srlike.game.helpers.StateAi.AiState;
+import com.srlike.game.gameobjects.enemies.StateAi.AiState;
 import java.util.ArrayList;
 import java.util.Random;
 

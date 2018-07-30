@@ -43,7 +43,7 @@ public class InputHandler implements InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         if(keycode==Input.Keys.SPACE){
-            ship.setEngine(true);
+            ship.engineOn();
         }
         
         if(keycode==Input.Keys.TAB){
@@ -56,7 +56,7 @@ public class InputHandler implements InputProcessor {
     @Override
     public boolean keyUp(int keycode) {
         if(keycode==Input.Keys.SPACE){
-            ship.setEngine(false);
+            ship.engineOff();
         }
         return true;
     }

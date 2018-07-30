@@ -14,8 +14,7 @@ import com.srlike.game.gameobjects.ScreenObject;
 import com.srlike.game.gameobjects.Ship;
 import com.srlike.game.gameobjects.environment.Explosion;
 import com.srlike.game.helpers.AssetLoader;
-import com.srlike.game.helpers.StateAi;
-import com.srlike.game.helpers.StateAi.AiState;
+import com.srlike.game.gameobjects.enemies.StateAi.AiState;
 import java.util.ArrayList;
 import java.util.Random;
 

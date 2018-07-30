@@ -15,8 +15,8 @@ import com.srlike.game.gameobjects.enemies.Enemy;
 import com.srlike.game.gameobjects.enemies.fighters.Fighter.FighterAi;
 import com.srlike.game.gameobjects.environment.Explosion;
 import com.srlike.game.helpers.AssetLoader;
-import com.srlike.game.helpers.StateAi;
-import com.srlike.game.helpers.StateAi.AiState;
+import com.srlike.game.gameobjects.enemies.StateAi;
+import com.srlike.game.gameobjects.enemies.StateAi.AiState;
 import java.util.ArrayList;
 import java.util.Random;
 
