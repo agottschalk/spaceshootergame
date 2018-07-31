@@ -102,13 +102,13 @@ public class Fighter extends Enemy{
             if(!following && rand.nextInt(250)==0){
                 changeHeading();
             }
-            steer(delta, true);
+            turnShip(delta, true);
         }
         
         @Override
         protected void aggroAction(float delta){
             targetVector.set(directionToShip);
-                steer(delta, true);
+                turnShip(delta, true);
                 if((shotTimer<0)
                     && ((directionToShip.angle()-velocity.angle()) < 15)
                     && ((directionToShip.angle()-velocity.angle()) > (-15))){
@@ -123,7 +123,7 @@ public class Fighter extends Enemy{
         @Override
         protected void recoveryAction(float delta){
             targetVector.set(directionToShip);
-                steer(delta, false);
+                turnShip(delta, false);
                 if(position.dst(ship.getPosition())>250){
                     state=AiState.AGGRO;
                 }
@@ -139,7 +139,7 @@ public class Fighter extends Enemy{
             targetVector.y=rand.nextInt(10)-5;
         }
         
-        private void steer(float delta, boolean chasing){
+        private void turnShip(float delta, boolean chasing){
             //angles here are in radians
             float target=velocity.angleRad(targetVector);
             float turnAngle;

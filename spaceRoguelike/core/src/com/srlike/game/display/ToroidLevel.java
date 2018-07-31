@@ -117,19 +117,19 @@ public class ToroidLevel {
     }
 
     private void generateEnemies() {
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < NUM_PROBES; i++) {
             enemies.add(new Probe(random.nextInt(LEVEL_WIDTH) - (LEVEL_WIDTH / 2),
                     random.nextInt(LEVEL_HEIGHT) - (LEVEL_HEIGHT / 2), this));
             gameObjects.add(enemies.get(i));
         }
 
-        for (int i = 0; i < 180; i++) {
+        for (int i = 0; i < NUM_SM_FIGHTERS; i++) {
             enemies.add(new SmFighter(random.nextInt(LEVEL_WIDTH) - (LEVEL_WIDTH / 2),
                     random.nextInt(LEVEL_HEIGHT) - (LEVEL_HEIGHT / 2), this));
             gameObjects.add(enemies.get(enemies.size() - 1));
         }
 
-        for (int i = 0; i < 200; i++) {
+        for (int i = 0; i < NUM_LG_FIGHTERS; i++) {
             enemies.add(new LgFighter(random.nextInt(LEVEL_WIDTH) - (LEVEL_WIDTH / 2),
                     random.nextInt(LEVEL_HEIGHT) - (LEVEL_HEIGHT / 2), this));
             gameObjects.add(enemies.get(enemies.size() - 1));
@@ -138,7 +138,7 @@ public class ToroidLevel {
     }
 
     private void generatePowerups() {
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < NUM_MACGUFFINS; i++) {
             gameObjects.add(new Macguffin(random.nextInt(LEVEL_WIDTH) - (LEVEL_WIDTH / 2),
                     random.nextInt(LEVEL_HEIGHT) - (LEVEL_HEIGHT / 2)));
             macguffinCount++;
