@@ -18,14 +18,10 @@ import java.util.ArrayList;
  */
 public class Port extends ScreenObject{
     private TextureRegion image;
-    private Ship ship;
-    private ToroidLevel level;
     
-    public Port(float posX, float posY, Ship ship, ToroidLevel level){
+    public Port(float posX, float posY){
         super(posX, posY, 600, 600, 150f);
         image=AssetLoader.atlas.findRegion("WB_baseu2_d0");
-        this.level=level;
-        this.ship=ship;
         type=Type.PORT;
     }
     

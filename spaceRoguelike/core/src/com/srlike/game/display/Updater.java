@@ -22,38 +22,32 @@ public class Updater {
     //debug tools
     private float fps;
 
-    private ToroidLevel level;
+    //private ToroidLevel level;
 
-    public Updater(ToroidLevel level) {
+    public Updater() {
         random = new Random();
-        this.level = level;
+        //this.level = level;
     }
 
+    /**
+     * Called once every frame, contains main logic for physics updates 
+     * (movement, collision, etc.). In the current build it simply calls the
+     * ToroidLevel class' update() method, but in the future the logic for
+     * updates will be in this method
+     * @param delta 
+     */
     public void update(float delta) {
 
         fps = 1 / delta;
 
-        level.update(delta);
+        ToroidLevel.getInstance().update(delta);
     }
 
     public void shipFire() {
-        level.shipFire();
+        ToroidLevel.getInstance().shipFire();
     }
 
     public float getFPS() {
         return fps;
     }
-
-    public Ship getShip() {
-        return level.getShip();
-    }
-
-    public ArrayList getObjects() {
-        return level.getObjects();
-    }
-
-    public ToroidLevel getLevel() {
-        return level;
-    }
-
 }

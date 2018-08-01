@@ -5,18 +5,7 @@
  */
 package com.srlike.game.gameobjects.enemies.fighters;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
-import com.srlike.game.display.ToroidLevel;
-import com.srlike.game.gameobjects.ScreenObject;
-import com.srlike.game.gameobjects.Ship;
-import com.srlike.game.gameobjects.enemies.Enemy;
-import com.srlike.game.gameobjects.enemies.EnemyBullet;
 import com.srlike.game.helpers.AssetLoader;
-import java.util.ArrayList;
-import java.util.Random;
 
 /**
  *
@@ -25,12 +14,11 @@ import java.util.Random;
 public class SmFighter extends Fighter{
     
     
-    public SmFighter(float positionX, float positionY, ToroidLevel level) {
+    public SmFighter(float positionX, float positionY) {
         
         super(positionX, positionY, 
                 100, 97, //width, height
-                20f, //collision radius
-                level);
+                20f);
         
         setSprite(AssetLoader.atlas.findRegion("smallfighter"));
         

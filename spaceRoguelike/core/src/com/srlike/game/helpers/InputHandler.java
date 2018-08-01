@@ -27,8 +27,7 @@ public class InputHandler implements InputProcessor {
     private OrthographicCamera camera;
     
     
-    private Ship ship;
-    private Vector3 mousePos;   //helps in steering ship
+    private Vector3 mousePos;   //position of cursor on screen, used to steer ship
     
     public InputHandler(Updater updater, Renderer renderer){
         this.updater=updater;
@@ -36,14 +35,14 @@ public class InputHandler implements InputProcessor {
         
         camera=this.renderer.getCam();
         
-        ship=this.updater.getShip();
+        //ship=this.updater.getShip();
         mousePos=new Vector3(0f,0f,0f);
     }
 
     @Override
     public boolean keyDown(int keycode) {
         if(keycode==Input.Keys.SPACE){
-            ship.engineOn();
+            Ship.getInstance().engineOn();
         }
         
         if(keycode==Input.Keys.TAB){
@@ -56,7 +55,7 @@ public class InputHandler implements InputProcessor {
     @Override
     public boolean keyUp(int keycode) {
         if(keycode==Input.Keys.SPACE){
-            ship.engineOff();
+            Ship.getInstance().engineOff();
         }
         return true;
     }
@@ -91,7 +90,7 @@ public class InputHandler implements InputProcessor {
         mousePos.x=screenX;
         mousePos.y=screenY;
         camera.unproject(mousePos);
-        ship.rotate(mousePos);
+        Ship.getInstance().rotate(mousePos);
         
         return true;
     }

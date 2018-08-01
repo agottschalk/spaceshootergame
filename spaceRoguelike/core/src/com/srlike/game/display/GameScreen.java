@@ -19,7 +19,6 @@ public class GameScreen implements Screen {
     private Updater updater;
     private Renderer renderer;
     private ToroidLevel level;
-    private Ship player;
 
     private float screenW, screenH;
 
@@ -27,8 +26,8 @@ public class GameScreen implements Screen {
         screenW = Gdx.graphics.getWidth();
         screenH = Gdx.graphics.getHeight();
 
-        level = new ToroidLevel(10000, 6500); //approx 9 screens by 9 screens
-        updater = new Updater(level);
+        level = ToroidLevel.getInstance();
+        updater = new Updater();
         renderer = new Renderer(updater, screenW, screenH);
 
         Gdx.input.setInputProcessor(new InputHandler(updater, renderer));

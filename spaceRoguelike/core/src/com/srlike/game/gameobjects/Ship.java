@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 /**
  * Represents the player's ship in game
+ *
  * @author Alex
  */
 public class Ship extends ScreenObject {
@@ -30,23 +31,52 @@ public class Ship extends ScreenObject {
     private final float acceleration = 500f;
     private final float speedCap = 600f;
 
-    private ToroidLevel level;
     private int macguffinsCollected;
 
     //level end animation
     private boolean locked = false;   //ship no longer accepts inputs during end animation
     private int framesRemaining = 30;
 
-    public Ship(float positionX, float positionY, //onscreen starting position, center of sprite
-            ToroidLevel level) {
+    private static class ShipHolder {
+
+        private static final Ship INSTANCE = new Ship(0, 0);
+    }
+
+    private Ship(float positionX, float positionY) {
         super(positionX, positionY, 112, 118, 32);
         type = Type.SHIP;
 
         image = AssetLoader.atlas.findRegion("playership");
 
-        this.level = level;
-
         //ship motion vectors
+        direction = new Vector2(0f, 0f);
+
+        collisionDamage = 9999;
+
+        hp = 100;
+        macguffinsCollected = 0;
+    }
+
+    /**
+     * Returns the instance of the ship
+     *
+     * @return the ship
+     */
+    public static Ship getInstance() {
+        return ShipHolder.INSTANCE;
+    }
+
+    /**
+     * Moves the ship to the given position and resets all stats to starting
+     * values. It does not actually create a new instance of the ship. Used when
+     * restarting upon death or start of new level
+     *
+     * @param Xpos new x position
+     * @param Ypos new y position
+     */
+    public void resetShip(float Xpos, float Ypos) {
+        setPosition(Xpos, Ypos);
+
         direction = new Vector2(0f, 0f);
 
         collisionDamage = 9999;
@@ -101,23 +131,24 @@ public class Ship extends ScreenObject {
     }
 
     /**
-     * Turns ship engine on. While on, the ship will accelerate until it
-     * reaches its max speed
+     * Turns ship engine on. While on, the ship will accelerate until it reaches
+     * its max speed
      */
-    public void engineOn(){
+    public void engineOn() {
         engine = true;
     }
-    
+
     /**
-     * Turns ship engine off. While off, the ship will decelerate due to
-     * 'space friction' until it stops
+     * Turns ship engine off. While off, the ship will decelerate due to 'space
+     * friction' until it stops
      */
-    public void engineOff(){
+    public void engineOff() {
         engine = false;
     }
 
     /**
      * Number of macguffin powerups collected so far
+     *
      * @return macgffins collected
      */
     public int getCollected() {
@@ -160,6 +191,7 @@ public class Ship extends ScreenObject {
             case MACGUFFIN:
                 macguffinsCollected++;
                 break;
+            /*
             case PORT:
                 if (macguffinsCollected >= level.getMacguffinCount()
                         && boundingCircle.contains(other.getPosition())) {
@@ -167,28 +199,19 @@ public class Ship extends ScreenObject {
                     //ends level
                 }
                 break;
+             */
         }
     }
 
     /**
      * Returns a string showing the x and y positions of the ship
      *
-     * @return x ad y position of ship
+     * @return x and y position of ship
      */
     @Override
     public String toString() {
         return "Ship X:" + position.x
                 + "\nShip Y:" + position.y;
-    }
-
-    /**
-     * Sets the position of the ship within the level
-     *
-     * @param x x coordinate
-     * @param y y coordinate
-     */
-    @Override
-    public void setPosition(float x, float y) {
     }
 
     /**
@@ -205,6 +228,7 @@ public class Ship extends ScreenObject {
     /**
      * Creates an explosion animation and adds it to the level. Meant to be
      * called when the player dies
+     *
      * @param level current level
      */
     @Override

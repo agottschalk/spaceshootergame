@@ -28,7 +28,7 @@ public class Renderer {
     private float screenW, screenH;
     
     private Updater updater;
-    private ToroidLevel level;
+    //private ToroidLevel level;
     private Hud hud;
     
     private OrthographicCamera camera;
@@ -36,9 +36,6 @@ public class Renderer {
     
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
-    
-    private Ship ship;
-    private ArrayList<ScreenObject> screenObjects;
     
     
     
@@ -63,19 +60,19 @@ public class Renderer {
         
         showColliders=false;
         
-        level=updater.getLevel();
-        ship=updater.getShip();
-        screenObjects=updater.getObjects();
-        hud=new Hud(updater, level, ship);
+        hud=new Hud(updater);
     }
     
     
     public void render(){
+        ArrayList<ScreenObject> screenObjects = ToroidLevel.getInstance().getObjects();
+        
         //render game screen image
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);   //clear screen
         
-        camera.position.set(ship.getPosition().x, ship.getPosition().y, 0f);
+        camera.position.set(Ship.getInstance().getPosition().x, 
+                Ship.getInstance().getPosition().y, 0f);
         camera.update();
         
         batch.setProjectionMatrix(camera.combined);
@@ -97,15 +94,18 @@ public class Renderer {
     }
     
     public void drawCollisionBoxes(){
+        ToroidLevel level = ToroidLevel.getInstance();
+        ArrayList<ScreenObject> screenObjects = level.getObjects();
+        
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeType.Line);
         
         //level bounds
         shapeRenderer.setColor(0,0,1,1);
-        shapeRenderer.rect(updater.getLevel().getCtrLeftBound(), 
-                updater.getLevel().getCtrBottomBound(), 
-                updater.getLevel().getSectorWidth(), 
-                updater.getLevel().getSectorHeight());
+        shapeRenderer.rect(level.getCtrLeftBound(), 
+                level.getCtrBottomBound(), 
+                level.getSectorWidth(), 
+                level.getSectorHeight());
         
         //asteroids
         shapeRenderer.setColor(1,1,0,1);
@@ -127,8 +127,9 @@ public class Renderer {
         
         //ship
         shapeRenderer.setColor(0,1,1,1);
-        shapeRenderer.circle(ship.getBoundingCircle().x, 
-                ship.getBoundingCircle().y, ship.getBoundingCircle().radius);
+        shapeRenderer.circle(Ship.getInstance().getBoundingCircle().x, 
+                Ship.getInstance().getBoundingCircle().y, 
+                Ship.getInstance().getBoundingCircle().radius);
         
         //port
         shapeRenderer.setColor(0,1,0,1);
@@ -147,10 +148,6 @@ public class Renderer {
     public OrthographicCamera getCam(){return camera;}
     
     public void toggleColliders(){
-        if(showColliders){
-            showColliders=false;
-        }else{
-            showColliders=true;
-        }
+        showColliders = !showColliders;
     }
 }

@@ -70,19 +70,19 @@ public class SingletonToroid {
         //probes
         for (int i = 0; i < NUM_PROBES; i++) {
             contents.add(new Probe(random.nextInt(LEVEL_WIDTH) - (LEVEL_WIDTH / 2),
-                    random.nextInt(LEVEL_HEIGHT) - (LEVEL_HEIGHT / 2), this));
+                    random.nextInt(LEVEL_HEIGHT) - (LEVEL_HEIGHT / 2)));
         }
         
         //small fighters
         for (int i = 0; i < NUM_SM_FIGHTERS; i++) {
             contents.add(new SmFighter(random.nextInt(LEVEL_WIDTH) - (LEVEL_WIDTH / 2),
-                    random.nextInt(LEVEL_HEIGHT) - (LEVEL_HEIGHT / 2), this));
+                    random.nextInt(LEVEL_HEIGHT) - (LEVEL_HEIGHT / 2)));
         }
         
         //large fighters
         for (int i = 0; i < NUM_LG_FIGHTERS; i++) {
             contents.add(new LgFighter(random.nextInt(LEVEL_WIDTH) - (LEVEL_WIDTH / 2),
-                    random.nextInt(LEVEL_HEIGHT) - (LEVEL_HEIGHT / 2), this));
+                    random.nextInt(LEVEL_HEIGHT) - (LEVEL_HEIGHT / 2)));
         }
         
         //collectables

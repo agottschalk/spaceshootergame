@@ -10,24 +10,24 @@ import com.srlike.game.gameobjects.Ship;
 import com.srlike.game.helpers.AssetLoader;
 
 /**
- *
+ * This class controls the HUD for the game.  Currently it is all text, but in
+ * the future there will be graphics and icons as well
  * @author Alex
  */
 public class Hud {
     private Updater updater;
-    private ToroidLevel level;
-    private Ship ship;
     
     private boolean showLevelStats=false;
     private boolean showShipExtraStats=false;
     
-    public Hud(Updater u, ToroidLevel t, Ship s){
+    public Hud(Updater u){
         updater=u;
-        level=t;
-        ship=s;
     }
     
     public void writeInfo(SpriteBatch batch){
+        Ship ship = Ship.getInstance();
+        ToroidLevel level = ToroidLevel.getInstance();
+        
         AssetLoader.arialFont.draw(batch, "Shields: "+ship.getHp(), 30,50);
         AssetLoader.arialFont.draw(batch, "FPS: "+updater.getFPS(), 230,50);
         AssetLoader.arialFont.draw(batch, 

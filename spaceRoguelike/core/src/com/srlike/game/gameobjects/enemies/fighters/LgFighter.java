@@ -21,10 +21,9 @@ import java.util.Random;
 public class LgFighter extends Fighter{
     private int shotCount;
     
-    public LgFighter(float positionX, float positionY, ToroidLevel level) {
+    public LgFighter(float positionX, float positionY) {
         
-        super(positionX, positionY, 
-                112, 96, 22, level);
+        super(positionX, positionY, 112, 96, 22);
         
         setSprite(AssetLoader.atlas.findRegion("lgFighter"));
         

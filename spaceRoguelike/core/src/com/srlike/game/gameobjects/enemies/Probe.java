@@ -19,7 +19,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- *
+ * The weakest enemies in the game. They drift around randomly at a slow speed.
+ * If fired upon, they will fire back.
  * @author Alex
  */
 public class Probe extends Enemy {
@@ -28,7 +29,7 @@ public class Probe extends Enemy {
     private final float speedCap;
     
     
-    public Probe(float positionX, float positionY, ToroidLevel level) {
+    public Probe(float positionX, float positionY) {
         
         super(positionX, positionY, 109, 109, 25f);
         
@@ -43,7 +44,7 @@ public class Probe extends Enemy {
         
         collisionDamage=34;
         
-        ai=new ProbeAi(AiState.PASSIVE, level);
+        ai=new ProbeAi(AiState.PASSIVE);
         ai.init();
     }
 
@@ -56,8 +57,8 @@ public class Probe extends Enemy {
     ********************Probe's AI************************
     */
     private class ProbeAi extends StateAi{
-        public ProbeAi(AiState state, ToroidLevel l){
-            super(state, Probe.this, l);
+        public ProbeAi(AiState startingState){
+            super(startingState, Probe.this);
         }
 
         @Override

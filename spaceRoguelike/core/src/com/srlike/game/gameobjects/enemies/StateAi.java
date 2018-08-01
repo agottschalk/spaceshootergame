@@ -23,17 +23,13 @@ public abstract class StateAi {
     protected Random rand;
     protected Ship ship;
     protected Vector2 directionToShip;
-    protected ToroidLevel level;
     protected ScreenObject outer;
 
-    public StateAi(AiState state, 
-            ScreenObject o, //object containing ai will pass self
-            ToroidLevel l){
+    public StateAi(AiState state, ScreenObject holder){
         this.state=state;   //passive by default, may add ability to create enemies that start in other states
-        outer=o;
-        rand=l.getRand();
-        ship=l.getShip();
-        level=l;
+        outer=holder;
+        rand=new Random();
+        ship=Ship.getInstance();
 
         directionToShip=new Vector2();
     }

@@ -37,7 +37,6 @@ public class ToroidLevel {
 
     private Random random;
 
-    private Ship ship;  //player's ship
     private Port port;  //starting point for player
     private ArrayList<ScreenObject> gameObjects;        //holds everything
     private ArrayList<Enemy> enemies;
@@ -68,10 +67,10 @@ public class ToroidLevel {
     private final int NUM_SM_FIGHTERS = 180;
     private final int NUM_LG_FIGHTERS = 200;
     private final int NUM_MACGUFFINS = 30;
-
-    public ToroidLevel(int levelW, int levelH) {
-        LEVEL_WIDTH = levelW;
-        LEVEL_HEIGHT = levelH;
+    
+    private ToroidLevel() {
+        LEVEL_WIDTH = 10000;
+        LEVEL_HEIGHT = 6500;
         SECTOR_WIDTH = LEVEL_WIDTH / 3;
         SECTOR_HEIGHT = LEVEL_HEIGHT / 3;
 
@@ -86,27 +85,41 @@ public class ToroidLevel {
         bottomCtrBound = -(SECTOR_HEIGHT / 2);
 
         random = new Random();
+    }
 
-        ship = new Ship(0, 0, this);
-        port = new Port(0, 0, ship, this);
+    public static ToroidLevel getInstance() {
+        return ToroidLevelHolder.INSTANCE;
+    }
 
-        macguffinCount = 0;
+    private static class ToroidLevelHolder {
 
-        gameObjects = new ArrayList();
-        enemies = new ArrayList();
+        private static final ToroidLevel INSTANCE = new ToroidLevel();
     }
 
     //***********************************************
     //Generating Level
     //***********************************************
+    
+    /**
+     * Creates all the objects (asteroids, enemies, etc.) in the level. This
+     * overwrites the contents of the existing level.  Trying to use the level
+     * before this method has been called may fail as the level will be empty.
+     */
     public void generate() {
+        macguffinCount = 0;
+        gameObjects = new ArrayList();
+        enemies = new ArrayList();
+        port = new Port(0, 0);
+        
         gameObjects.add(port);
-        gameObjects.add(ship);
+        gameObjects.add(Ship.getInstance());
         generateAsteroids();
         generateEnemies();
         generatePowerups();
 
         cleanLevel();
+        
+        Gdx.app.log("level", "level generated");
     }
 
     private void generateAsteroids() {
@@ -119,19 +132,19 @@ public class ToroidLevel {
     private void generateEnemies() {
         for (int i = 0; i < NUM_PROBES; i++) {
             enemies.add(new Probe(random.nextInt(LEVEL_WIDTH) - (LEVEL_WIDTH / 2),
-                    random.nextInt(LEVEL_HEIGHT) - (LEVEL_HEIGHT / 2), this));
+                    random.nextInt(LEVEL_HEIGHT) - (LEVEL_HEIGHT / 2)));
             gameObjects.add(enemies.get(i));
         }
 
         for (int i = 0; i < NUM_SM_FIGHTERS; i++) {
             enemies.add(new SmFighter(random.nextInt(LEVEL_WIDTH) - (LEVEL_WIDTH / 2),
-                    random.nextInt(LEVEL_HEIGHT) - (LEVEL_HEIGHT / 2), this));
+                    random.nextInt(LEVEL_HEIGHT) - (LEVEL_HEIGHT / 2)));
             gameObjects.add(enemies.get(enemies.size() - 1));
         }
 
         for (int i = 0; i < NUM_LG_FIGHTERS; i++) {
             enemies.add(new LgFighter(random.nextInt(LEVEL_WIDTH) - (LEVEL_WIDTH / 2),
-                    random.nextInt(LEVEL_HEIGHT) - (LEVEL_HEIGHT / 2), this));
+                    random.nextInt(LEVEL_HEIGHT) - (LEVEL_HEIGHT / 2)));
             gameObjects.add(enemies.get(enemies.size() - 1));
         }
 
@@ -195,10 +208,14 @@ public class ToroidLevel {
     //***************************************************
     //updating level
     //***************************************************
-    /*
-    Main game loop logic, called once every cycle
+    /**
+     * Handles physics updates (ie. movement, collision) each frame. This will
+     * eventually be moved to the Updater class
+     * @param delta time since last update
      */
     public void update(float delta) {
+        Ship ship = Ship.getInstance();
+        
         //using normal 'for' loops, 'for each' creates an iterator each time and causes more gc
 
         //update all game objects
@@ -238,7 +255,12 @@ public class ToroidLevel {
     }
 
     //level scrolling ************************************
+    /*
+    determines whether the level should shift and in which direction
+    */
     private void scrollLevel() {
+        Ship ship = Ship.getInstance();
+        
         if (ship.getPosition().x > rightCtrBound) {
             scrollRight();
         } else if (ship.getPosition().x < leftCtrBound) {
@@ -252,6 +274,9 @@ public class ToroidLevel {
         }
     }
 
+    /**
+     * Shifts the leftmost third of the level to the right side
+     */
     private void scrollRight() {
         //teleport objects ahead of ship
         for (ScreenObject s : gameObjects) {
@@ -270,6 +295,9 @@ public class ToroidLevel {
 
     }
 
+    /**
+     * Shifts the rightmost third of the level to the left side
+     */
     private void scrollLeft() {
         for (ScreenObject s : gameObjects) {
             if (s.getType() == Type.SHIP) {
@@ -288,7 +316,10 @@ public class ToroidLevel {
 
     }
 
-    private void scrollUp() {
+    /**
+     * Shifts the bottom third of the level to the top
+     */
+    public void scrollUp() {
         for (ScreenObject s : gameObjects) {
             if (s.getType() == Type.SHIP) {
                 continue;
@@ -305,7 +336,10 @@ public class ToroidLevel {
         bottomCtrBound += SECTOR_HEIGHT;
     }
 
-    private void scrollDown() {
+    /**
+     * Shifts the top third of the level to the bottom
+     */
+    public void scrollDown() {
         for (ScreenObject s : gameObjects) {
             if (s.getType() == Type.SHIP) {
                 continue;
@@ -323,7 +357,7 @@ public class ToroidLevel {
     }
 
     public void shipFire() {
-        ship.fireBullet(gameObjects);
+        Ship.getInstance().fireBullet(gameObjects);
     }
 
     //*****************************************************
@@ -367,11 +401,7 @@ public class ToroidLevel {
 
     //***********************************************
     //getters and setters
-    public Ship getShip() {
-        return ship;
-    }
-
-    public ArrayList getObjects() {
+    public ArrayList<ScreenObject> getObjects() {
         return gameObjects;
     }
 
@@ -381,10 +411,6 @@ public class ToroidLevel {
 
     public int getMacguffinCount() {
         return macguffinCount;
-    }
-
-    public Random getRand() {
-        return random;
     }
 
     public int getHeight() {

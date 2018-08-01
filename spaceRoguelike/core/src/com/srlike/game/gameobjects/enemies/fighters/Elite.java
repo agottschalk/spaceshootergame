@@ -21,7 +21,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- *
+ * Largest enemy in the game. Accompanied by a small squadron of fighters, will
+ * circle and fire at player if aggro'd.
  * @author Alex
  */
 public class Elite extends Enemy{//class under construction
@@ -45,23 +46,23 @@ public class Elite extends Enemy{//class under construction
         
         addEntourage(level);
         
-        ai=new EliteAi(AiState.PASSIVE, level);
+        ai=new EliteAi(AiState.PASSIVE);
         ai.init();
     }
     
     private void addEntourage(ToroidLevel level){
         entourage=new ArrayList<SmFighter>();
         
-        entourage.add(new SmFighter(position.x+200, position.y+200, level));
+        entourage.add(new SmFighter(position.x+200, position.y+200));
         level.getObjects().add(entourage.get(0));
         
-        entourage.add(new SmFighter(position.x-200, position.y+200, level));
+        entourage.add(new SmFighter(position.x-200, position.y+200));
         level.getObjects().add(entourage.get(1));
         
-        entourage.add(new SmFighter(position.x+200, position.y-200, level));
+        entourage.add(new SmFighter(position.x+200, position.y-200));
         level.getObjects().add(entourage.get(2));
         
-        entourage.add(new SmFighter(position.x-200, position.y-200, level));
+        entourage.add(new SmFighter(position.x-200, position.y-200));
         level.getObjects().add(entourage.get(3));
     }
     
@@ -126,8 +127,8 @@ public class Elite extends Enemy{//class under construction
     private class EliteAi extends StateAi{
         private Vector2 targetVector;
         
-        public EliteAi(AiState state, ToroidLevel l){
-            super(state, Elite.this, l);
+        public EliteAi(AiState state){
+            super(state, Elite.this);
         }
         
         @Override

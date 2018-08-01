@@ -41,14 +41,12 @@ public class Fighter extends Enemy{
     private boolean following;
     
     public Fighter(float positionX, float positionY, 
-            int width, int height, float radius,
-            ToroidLevel level) {
-        this(positionX, positionY, width, height, radius, level, false);
+            int width, int height, float radius) {
+        this(positionX, positionY, width, height, radius, false);
     }
     
     public Fighter(float positionX, float positionY, 
-            int width, int height, float radius,
-            ToroidLevel level, boolean following) {
+            int width, int height, float radius, boolean following) {
         
         super(positionX, positionY, 
                 width, height, radius);
@@ -56,7 +54,7 @@ public class Fighter extends Enemy{
         collisionDamage=34;
         
         this.following=following;
-        ai=new FighterAi(AiState.PASSIVE, level);
+        ai=new FighterAi(AiState.PASSIVE);
         
         lastPos=new Vector2(position);
     }
@@ -78,8 +76,8 @@ public class Fighter extends Enemy{
     protected class FighterAi extends StateAi{
         private Vector2 targetVector;
         
-        public FighterAi(AiState state, ToroidLevel l){
-            super(state, Fighter.this, l);
+        public FighterAi(AiState state){
+            super(state, Fighter.this);
         }
         
         @Override
@@ -213,16 +211,16 @@ public class Fighter extends Enemy{
     }
 
     @Override
-    public void collide(ScreenObject s) {
-        switch(s.getType()){
-            case SHIP: hp-=s.dealDamage();
+    public void collide(ScreenObject other) {
+        switch(other.getType()){
+            case SHIP: hp-=other.dealDamage();
                 break;
-            case BULLET:  hp-=s.dealDamage();
+            case BULLET:  hp-=other.dealDamage();
                 ai.setState(AiState.AGGRO);
                 break;
             case ASTEROID:
                 //don't go through asteroid
-                simpleDeflect(s);
+                simpleDeflect(other);
                 break;
             }
         
