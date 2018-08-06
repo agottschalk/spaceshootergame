@@ -15,21 +15,20 @@ import com.srlike.game.helpers.AssetLoader;
  * @author Alex
  */
 public class Hud {
-    private Updater updater;
+    //private Updater updater;
     
     private boolean showLevelStats=false;
     private boolean showShipExtraStats=false;
     
-    public Hud(Updater u){
-        updater=u;
+    public Hud(){
     }
     
     public void writeInfo(SpriteBatch batch){
-        Ship ship = Ship.getInstance();
-        ToroidLevel level = ToroidLevel.getInstance();
+        Ship ship = GameScreen.getInstance().getShip();
+        ToroidLevel level = GameScreen.getInstance().getLevel();
         
         AssetLoader.arialFont.draw(batch, "Shields: "+ship.getHp(), 30,50);
-        AssetLoader.arialFont.draw(batch, "FPS: "+updater.getFPS(), 230,50);
+        AssetLoader.arialFont.draw(batch, "FPS: "+GameScreen.getInstance().getUpdater().getFPS(), 230,50);
         AssetLoader.arialFont.draw(batch, 
                 "Macguffins: "+level.getMacguffinCount(), 530, 50);
         AssetLoader.arialFont.draw(batch, "Collected: "+ship.getCollected(), 

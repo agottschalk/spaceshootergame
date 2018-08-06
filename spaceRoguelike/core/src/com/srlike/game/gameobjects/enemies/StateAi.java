@@ -6,6 +6,7 @@
 package com.srlike.game.gameobjects.enemies;
 
 import com.badlogic.gdx.math.Vector2;
+import com.srlike.game.display.GameScreen;
 import com.srlike.game.display.ToroidLevel;
 import com.srlike.game.gameobjects.ScreenObject;
 import com.srlike.game.gameobjects.Ship;
@@ -29,7 +30,7 @@ public abstract class StateAi {
         this.state=state;   //passive by default, may add ability to create enemies that start in other states
         outer=holder;
         rand=new Random();
-        ship=Ship.getInstance();
+        ship=GameScreen.getInstance().getShip();
 
         directionToShip=new Vector2();
     }

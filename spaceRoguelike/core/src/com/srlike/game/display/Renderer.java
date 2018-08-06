@@ -27,10 +27,6 @@ public class Renderer {
     
     private float screenW, screenH;
     
-    private Updater updater;
-    //private ToroidLevel level;
-    private Hud hud;
-    
     private OrthographicCamera camera;
     private OrthographicCamera hudCam;
     
@@ -39,11 +35,9 @@ public class Renderer {
     
     
     
-    public Renderer(Updater updater, float screenW, float screenH){
+    public Renderer(float screenW, float screenH){
         this.screenW=screenW;
         this.screenH=screenH;
-        
-        this.updater=updater;   //renderer can get all game objects from the updater
         
         camera=new OrthographicCamera(screenW, screenH);
         camera.setToOrtho(false, screenW, screenH);
@@ -59,33 +53,35 @@ public class Renderer {
         shapeRenderer=new ShapeRenderer();
         
         showColliders=false;
-        
-        hud=new Hud(updater);
     }
     
-    
+    /**
+     * Draws the current frame.
+     */
     public void render(){
-        ArrayList<ScreenObject> screenObjects = ToroidLevel.getInstance().getObjects();
+        GameScreen game = GameScreen.getInstance();
+        Ship player = game.getShip();
         
         //render game screen image
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);   //clear screen
         
-        camera.position.set(Ship.getInstance().getPosition().x, 
-                Ship.getInstance().getPosition().y, 0f);
+        camera.position.set(player.getPosition().x, player.getPosition().y, 0f);
         camera.update();
         
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         
         //drawing game screen
-        for(ScreenObject s:screenObjects){
+        for(ScreenObject s:game.getLevel().getObjects()){
             s.draw(batch);
         }
         
+        player.draw(batch);
+        
         //drawing hud
         batch.setProjectionMatrix(hudCam.combined);
-        hud.writeInfo(batch);
+        GameScreen.getInstance().getHud().writeInfo(batch);
         
         batch.end();
         if(showColliders){
@@ -93,8 +89,8 @@ public class Renderer {
         }
     }
     
-    public void drawCollisionBoxes(){
-        ToroidLevel level = ToroidLevel.getInstance();
+    private void drawCollisionBoxes(){
+        ToroidLevel level = GameScreen.getInstance().getLevel();
         ArrayList<ScreenObject> screenObjects = level.getObjects();
         
         shapeRenderer.setProjectionMatrix(camera.combined);
@@ -126,10 +122,11 @@ public class Renderer {
         }
         
         //ship
+        Ship player = GameScreen.getInstance().getShip();
         shapeRenderer.setColor(0,1,1,1);
-        shapeRenderer.circle(Ship.getInstance().getBoundingCircle().x, 
-                Ship.getInstance().getBoundingCircle().y, 
-                Ship.getInstance().getBoundingCircle().radius);
+        shapeRenderer.circle(player.getBoundingCircle().x, 
+                player.getBoundingCircle().y, 
+                player.getBoundingCircle().radius);
         
         //port
         shapeRenderer.setColor(0,1,0,1);
@@ -145,9 +142,18 @@ public class Renderer {
         shapeRenderer.end();
     }
     
-    public OrthographicCamera getCam(){return camera;}
+    /**
+     * Returns the camera object used in drawing the game (as opposed to the
+     * hud or menu elements on the screen)
+     * @return game camera
+     */
+    public OrthographicCamera getGameCam(){return camera;}
     
-    public void toggleColliders(){
+    /**
+     * Toggles whether or not colliders are visible while playing the game.
+     * By default, they are not.
+     */
+    public void toggleShowColliders(){
         showColliders = !showColliders;
     }
 }

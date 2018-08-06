@@ -5,48 +5,32 @@
  */
 package com.srlike.game.helpers;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.srlike.game.display.Renderer;
-import com.srlike.game.display.Updater;
-import com.srlike.game.gameobjects.Ship;
+import com.srlike.game.display.GameScreen;
 
 /**
- *
+ * Handles inputs while on main gameplay screen
  * @author Alex
  */
-public class InputHandler implements InputProcessor {
-    
-    private Updater updater;
-    private Renderer renderer;
-    private OrthographicCamera camera;
-    
+public class GameInputProcessor implements InputProcessor {
     
     private Vector3 mousePos;   //position of cursor on screen, used to steer ship
     
-    public InputHandler(Updater updater, Renderer renderer){
-        this.updater=updater;
-        this.renderer=renderer;
-        
-        camera=this.renderer.getCam();
-        
-        //ship=this.updater.getShip();
+    public GameInputProcessor(){
         mousePos=new Vector3(0f,0f,0f);
     }
 
     @Override
     public boolean keyDown(int keycode) {
         if(keycode==Input.Keys.SPACE){
-            Ship.getInstance().engineOn();
+            GameScreen.getInstance().getShip().engineOn();
         }
         
         if(keycode==Input.Keys.TAB){
-            renderer.toggleColliders();
+            GameScreen.getInstance().getRenderer().toggleShowColliders();
         }
         
         return true;
@@ -55,7 +39,7 @@ public class InputHandler implements InputProcessor {
     @Override
     public boolean keyUp(int keycode) {
         if(keycode==Input.Keys.SPACE){
-            Ship.getInstance().engineOff();
+            GameScreen.getInstance().getShip().engineOff();
         }
         return true;
     }
@@ -68,7 +52,7 @@ public class InputHandler implements InputProcessor {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if(button==Buttons.LEFT){
-            updater.shipFire();
+            GameScreen.getInstance().getShip().fireBullet(GameScreen.getInstance().getLevel().getObjects());
         }
         
         
@@ -89,8 +73,8 @@ public class InputHandler implements InputProcessor {
     public boolean mouseMoved(int screenX, int screenY) {
         mousePos.x=screenX;
         mousePos.y=screenY;
-        camera.unproject(mousePos);
-        Ship.getInstance().rotate(mousePos);
+        GameScreen.getInstance().getRenderer().getGameCam().unproject(mousePos);
+        GameScreen.getInstance().getShip().rotate(mousePos);
         
         return true;
     }

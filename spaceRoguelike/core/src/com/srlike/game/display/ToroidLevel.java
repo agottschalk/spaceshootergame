@@ -68,7 +68,7 @@ public class ToroidLevel {
     private final int NUM_LG_FIGHTERS = 200;
     private final int NUM_MACGUFFINS = 30;
     
-    private ToroidLevel() {
+    public ToroidLevel() {
         LEVEL_WIDTH = 10000;
         LEVEL_HEIGHT = 6500;
         SECTOR_WIDTH = LEVEL_WIDTH / 3;
@@ -87,15 +87,6 @@ public class ToroidLevel {
         random = new Random();
     }
 
-    public static ToroidLevel getInstance() {
-        return ToroidLevelHolder.INSTANCE;
-    }
-
-    private static class ToroidLevelHolder {
-
-        private static final ToroidLevel INSTANCE = new ToroidLevel();
-    }
-
     //***********************************************
     //Generating Level
     //***********************************************
@@ -112,7 +103,6 @@ public class ToroidLevel {
         port = new Port(0, 0);
         
         gameObjects.add(port);
-        gameObjects.add(Ship.getInstance());
         generateAsteroids();
         generateEnemies();
         generatePowerups();
@@ -214,11 +204,12 @@ public class ToroidLevel {
      * @param delta time since last update
      */
     public void update(float delta) {
-        Ship ship = Ship.getInstance();
+        Ship ship = GameScreen.getInstance().getShip();
         
         //using normal 'for' loops, 'for each' creates an iterator each time and causes more gc
 
         //update all game objects
+        ship.update(delta);
         for (int i = 0; i < gameObjects.size(); i++) {
             ScreenObject s = gameObjects.get(i);
             edgeCheck(s);
@@ -259,7 +250,7 @@ public class ToroidLevel {
     determines whether the level should shift and in which direction
     */
     private void scrollLevel() {
-        Ship ship = Ship.getInstance();
+        Ship ship = GameScreen.getInstance().getShip();
         
         if (ship.getPosition().x > rightCtrBound) {
             scrollRight();
@@ -356,23 +347,26 @@ public class ToroidLevel {
         bottomCtrBound -= SECTOR_HEIGHT;
     }
 
-    public void shipFire() {
-        Ship.getInstance().fireBullet(gameObjects);
-    }
-
     //*****************************************************
     //collision detection
     //*****************************************************
     private void checkCollisions() {
+        Ship player = GameScreen.getInstance().getShip();
+        
         for (int i = 0; i < gameObjects.size(); i++) {
-            ScreenObject s = gameObjects.get(i);
+            ScreenObject firstObject = gameObjects.get(i);
+            if(overlaps(firstObject, player)){
+                firstObject.collide(player);
+                player.collide(firstObject);
+            }
             for (int j = i; j < gameObjects.size(); j++) {
-                ScreenObject t = gameObjects.get(j);
-                if (s.getType() == ScreenObject.Type.ASTEROID && t.getType() == ScreenObject.Type.ASTEROID) {
+                ScreenObject secondObject = gameObjects.get(j);
+                if (firstObject.getType() == ScreenObject.Type.ASTEROID 
+                        && secondObject.getType() == ScreenObject.Type.ASTEROID) {
                     //continue
-                } else if (overlaps(s, t)) {
-                    s.collide(t);
-                    t.collide(s);
+                } else if (overlaps(firstObject, secondObject)) {
+                    firstObject.collide(secondObject);
+                    secondObject.collide(firstObject);
                 }
             }
         }

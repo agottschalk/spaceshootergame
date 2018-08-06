@@ -33,16 +33,11 @@ public class Ship extends ScreenObject {
 
     private int macguffinsCollected;
 
-    //level end animation
+    //level end animation - not used yet
     private boolean locked = false;   //ship no longer accepts inputs during end animation
     private int framesRemaining = 30;
 
-    private static class ShipHolder {
-
-        private static final Ship INSTANCE = new Ship(0, 0);
-    }
-
-    private Ship(float positionX, float positionY) {
+    public Ship(float positionX, float positionY) {
         super(positionX, positionY, 112, 118, 32);
         type = Type.SHIP;
 
@@ -57,33 +52,6 @@ public class Ship extends ScreenObject {
         macguffinsCollected = 0;
     }
 
-    /**
-     * Returns the instance of the ship
-     *
-     * @return the ship
-     */
-    public static Ship getInstance() {
-        return ShipHolder.INSTANCE;
-    }
-
-    /**
-     * Moves the ship to the given position and resets all stats to starting
-     * values. It does not actually create a new instance of the ship. Used when
-     * restarting upon death or start of new level
-     *
-     * @param Xpos new x position
-     * @param Ypos new y position
-     */
-    public void resetShip(float Xpos, float Ypos) {
-        setPosition(Xpos, Ypos);
-
-        direction = new Vector2(0f, 0f);
-
-        collisionDamage = 9999;
-
-        hp = 100;
-        macguffinsCollected = 0;
-    }
 
     /**
      * Called every frame, updates ships position and velocity

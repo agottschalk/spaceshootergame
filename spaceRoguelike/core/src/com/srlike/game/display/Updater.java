@@ -26,7 +26,6 @@ public class Updater {
 
     public Updater() {
         random = new Random();
-        //this.level = level;
     }
 
     /**
@@ -40,11 +39,7 @@ public class Updater {
 
         fps = 1 / delta;
 
-        ToroidLevel.getInstance().update(delta);
-    }
-
-    public void shipFire() {
-        ToroidLevel.getInstance().shipFire();
+        GameScreen.getInstance().getLevel().update(delta);
     }
 
     public float getFPS() {

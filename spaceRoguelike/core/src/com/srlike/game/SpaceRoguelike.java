@@ -11,7 +11,7 @@ public class SpaceRoguelike extends Game {
     @Override
     public void create() {
         AssetLoader.load();
-        setScreen(new GameScreen());
+        setScreen(GameScreen.getInstance());
     }
 	
     @Override

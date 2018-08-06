@@ -22,6 +22,8 @@ public class AssetLoader {
         atlas=new TextureAtlas(Gdx.files.internal("spriteMap.txt"));
         
         arialFont=new BitmapFont(Gdx.files.internal("arialblack.fnt"));
+        
+        Gdx.app.log("Asset Loader", "Loaded Assets");
     }
     
     public static void dispose(){
