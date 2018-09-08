@@ -13,11 +13,11 @@ import com.srlike.game.helpers.GameInputProcessor;
 /**
  * Screen for main gameplay (as opposed to menus, title, etc.) Includes the hud
  * that displays while in the level
- * 
+ *
  * The GameScreen represents the top of the hierarchy for accessing components
  * of the game such as the player's ship, or the level and objects within it.
- * The Gamescreen itself can be accessed by its static getInstance() method
- * and its subcomponents accessed by calling the respective get methods.
+ * The Gamescreen itself can be accessed by its static getInstance() method and
+ * its subcomponents accessed by calling the respective get methods.
  *
  * @author Alex
  */
@@ -34,6 +34,18 @@ public class GameScreen implements Screen {
     private float screenW, screenH;
 
     private GameScreen() {
+        Gdx.app.log("GameScreen", "Making screen");
+        
+        screenW = Gdx.graphics.getWidth();
+        screenH = Gdx.graphics.getHeight();
+
+        ship = new Ship(0, 0);
+        level = new ToroidLevel();
+        updater = new Updater();
+        renderer = new Renderer(screenW, screenH);
+        hud = new Hud();
+        
+        Gdx.app.log("GameScreen", "Done making screen");
     }
 
     /**
@@ -58,27 +70,14 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        Gdx.app.log("GameScreen", "Started making GameScreen");
-        
-        screenW = Gdx.graphics.getWidth();
-        screenH = Gdx.graphics.getHeight();
-
-        ship = new Ship(0, 0);
-        level = new ToroidLevel();
-        updater = new Updater();
-        renderer = new Renderer(screenW, screenH);
-        hud = new Hud();
-
         Gdx.input.setInputProcessor(new GameInputProcessor());
-
         level.generate();
-        
-        Gdx.app.log("GameScreen", "Finished making GameScreen");
     }
 
     /**
-     * Called once every frame. Resolves physics updates and collisions 
-     * then draws all objects on screen in their new states
+     * Called once every frame. Resolves physics updates and collisions then
+     * draws all objects on screen in their new states
+     *
      * @param delta time since last render
      */
     @Override

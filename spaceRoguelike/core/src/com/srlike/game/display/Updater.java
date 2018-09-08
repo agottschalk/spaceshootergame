@@ -5,6 +5,7 @@
  */
 package com.srlike.game.display;
 
+import com.badlogic.gdx.Gdx;
 import com.srlike.game.gameobjects.Ship;
 import java.util.ArrayList;
 import java.util.Random;
@@ -26,6 +27,8 @@ public class Updater {
 
     public Updater() {
         random = new Random();
+        
+        Gdx.app.log("updater", "created");
     }
 
     /**

@@ -68,6 +68,9 @@ public class ToroidLevel {
     private final int NUM_LG_FIGHTERS = 200;
     private final int NUM_MACGUFFINS = 30;
     
+    /**
+     * Creates an empty level centered around (0,0)
+     */
     public ToroidLevel() {
         LEVEL_WIDTH = 10000;
         LEVEL_HEIGHT = 6500;
@@ -97,25 +100,35 @@ public class ToroidLevel {
      * before this method has been called may fail as the level will be empty.
      */
     public void generate() {
+        Gdx.app.log("Level", "started level");
+        
         macguffinCount = 0;
         gameObjects = new ArrayList();
         enemies = new ArrayList();
         port = new Port(0, 0);
         
         gameObjects.add(port);
-        generateAsteroids();
+        generateAsteroids(NUM_ASTEROIDS, LEVEL_WIDTH, LEVEL_HEIGHT);
         generateEnemies();
-        generatePowerups();
+        generatePowerups(NUM_MACGUFFINS, LEVEL_WIDTH, LEVEL_HEIGHT);
 
         cleanLevel();
         
         Gdx.app.log("level", "level generated");
     }
 
-    private void generateAsteroids() {
-        for (int i = 0; i < NUM_ASTEROIDS; i++) {
-            gameObjects.add(new Asteroid(random.nextInt(LEVEL_WIDTH) - (LEVEL_WIDTH / 2),
-                    random.nextInt(LEVEL_HEIGHT) - (LEVEL_HEIGHT / 2)));
+    
+    /*
+    generic generator method:
+    params: <T extends ScreenObject>, number, level h, level w
+    obj = T.newIinstance() <- need to create no arg constructor for everything
+    obj.set position
+    gameObjects.add(obj)
+    */
+    private void generateAsteroids(int number, int width, int height) {
+        for (int i = 0; i < number; i++) {
+            gameObjects.add(new Asteroid(random.nextInt(width) - (width / 2),
+                    random.nextInt(height) - (height / 2)));
         }
     }
 
@@ -140,10 +153,10 @@ public class ToroidLevel {
 
     }
 
-    private void generatePowerups() {
-        for (int i = 0; i < NUM_MACGUFFINS; i++) {
-            gameObjects.add(new Macguffin(random.nextInt(LEVEL_WIDTH) - (LEVEL_WIDTH / 2),
-                    random.nextInt(LEVEL_HEIGHT) - (LEVEL_HEIGHT / 2)));
+    private void generatePowerups(int number, int levelWidth, int levelHeight) {
+        for (int i = 0; i < number; i++) {
+            gameObjects.add(new Macguffin(random.nextInt(levelWidth) - (levelWidth / 2),
+                    random.nextInt(levelHeight) - (levelHeight / 2)));
             macguffinCount++;
         }
     }
@@ -398,11 +411,7 @@ public class ToroidLevel {
     public ArrayList<ScreenObject> getObjects() {
         return gameObjects;
     }
-
-    public ArrayList getEnemies() {
-        return enemies;
-    }
-
+    
     public int getMacguffinCount() {
         return macguffinCount;
     }

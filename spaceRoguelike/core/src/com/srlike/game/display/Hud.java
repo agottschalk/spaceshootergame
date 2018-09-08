@@ -5,6 +5,7 @@
  */
 package com.srlike.game.display;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.srlike.game.gameobjects.Ship;
 import com.srlike.game.helpers.AssetLoader;
@@ -21,9 +22,12 @@ public class Hud {
     private boolean showShipExtraStats=false;
     
     public Hud(){
+        Gdx.app.log("hud", "created");
     }
     
     public void writeInfo(SpriteBatch batch){
+        //Gdx.app.log("Hud", "writeinfo");
+        
         Ship ship = GameScreen.getInstance().getShip();
         ToroidLevel level = GameScreen.getInstance().getLevel();
         

@@ -22,7 +22,7 @@ public abstract class StateAi {
     
     protected AiState state;
     protected Random rand;
-    protected Ship ship;
+    //protected Ship ship;
     protected Vector2 directionToShip;
     protected ScreenObject outer;
 
@@ -30,7 +30,6 @@ public abstract class StateAi {
         this.state=state;   //passive by default, may add ability to create enemies that start in other states
         outer=holder;
         rand=new Random();
-        ship=GameScreen.getInstance().getShip();
 
         directionToShip=new Vector2();
     }
@@ -38,6 +37,8 @@ public abstract class StateAi {
     public abstract void init();
 
     public void doStuff(float delta){
+        Ship ship = GameScreen.getInstance().getShip();
+        
         directionToShip.set(ship.getPosition().x-outer.getPosition().x, 
             ship.getPosition().y-outer.getPosition().y);
         universal1(delta);

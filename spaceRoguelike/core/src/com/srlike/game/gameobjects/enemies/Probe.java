@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.srlike.game.display.GameScreen;
 import com.srlike.game.display.ToroidLevel;
 import com.srlike.game.gameobjects.ScreenObject;
 import com.srlike.game.gameobjects.Ship;
@@ -74,6 +75,8 @@ public class Probe extends Enemy {
         
         @Override
         protected void aggroAction(float delta){    //fires at ship if aggro
+            Ship ship = GameScreen.getInstance().getShip();
+            
             directionToShip.set(ship.getPosition().x-position.x, 
                 ship.getPosition().y-position.y);
 

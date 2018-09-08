@@ -9,6 +9,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.srlike.game.display.GameScreen;
 import com.srlike.game.display.ToroidLevel;
 import com.srlike.game.gameobjects.ScreenObject;
 import com.srlike.game.gameobjects.Ship;
@@ -105,6 +106,8 @@ public class Fighter extends Enemy{
         
         @Override
         protected void aggroAction(float delta){
+            Ship ship = GameScreen.getInstance().getShip();
+            
             targetVector.set(directionToShip);
                 turnShip(delta, true);
                 if((shotTimer<0)
@@ -120,6 +123,8 @@ public class Fighter extends Enemy{
         
         @Override
         protected void recoveryAction(float delta){
+            Ship ship = GameScreen.getInstance().getShip();
+            
             targetVector.set(directionToShip);
                 turnShip(delta, false);
                 if(position.dst(ship.getPosition())>250){

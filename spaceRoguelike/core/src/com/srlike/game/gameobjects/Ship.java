@@ -16,7 +16,10 @@ import com.srlike.game.helpers.AssetLoader;
 import java.util.ArrayList;
 
 /**
- * Represents the player's ship in game
+ * Represents the player's ship in game.
+ *
+ * Because the ship can persist from one level to the next, it is not included
+ * in the list of objects within the level and must be accessed separately
  *
  * @author Alex
  */
@@ -51,7 +54,6 @@ public class Ship extends ScreenObject {
         hp = 100;
         macguffinsCollected = 0;
     }
-
 
     /**
      * Called every frame, updates ships position and velocity
